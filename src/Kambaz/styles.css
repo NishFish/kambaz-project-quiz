@@ -1,0 +1,175 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+
+body * {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+@media (min-width: 768px) {
+    #wd-kambaz .wd-main-content-offset {
+        padding-left: 140px !important;
+    }
+}
+
+#wd-neu-link {
+    background-color: transparent;
+    padding-top: 25px;
+}
+
+.list-group-item:focus,
+.list-group-item:active {
+    background-color: white !important;
+    /*color: #dc3545 !important;*/
+}
+
+.list-group-item {
+    transition: background-color 0.5s ease, color 0.5s ease;
+}
+
+#wd-account-link:focus .fs-1 {
+    color: grey !important;
+}
+
+.wd-dashboard-course {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: "270px";
+    --bs-gutter-x: 30px;
+    --bs-gutter-y: 30px;
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    text-align: center;
+}
+
+.card-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.card img {
+    margin: 0 auto;
+}
+
+.card-text,
+.card-title {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    max-width: 225px;
+    overflow: hidden;
+}
+
+.card-text {
+    font-size: 0.9rem
+}
+
+.btn-primary {
+    margin-top: -5px;
+}
+
+.list-group.wd>.list-group-item.active {
+    color: black;
+    background-color: white;
+    border-left: 3px solid black !important;
+}
+
+button.custom-dark-grey-btn.btn-lg {
+    background-color: rgb(226, 226, 226) !important;
+    color: rgb(0, 0, 0) !important;
+}
+
+button.custom-dark-grey-btn.btn-lg:hover {
+    background-color: #8b8b8b !important;
+    color: white !important;
+}
+
+#wd-publish-all-btn,
+#wd-publish-all-btn:focus,
+#wd-publish-all-btn:active {
+    outline: none !important;
+    box-shadow: none !important;
+    border: none;
+}
+
+.btn-secondary {
+    --bs-btn-color: #000 !important;
+    --bs-btn-bg: #c7cdd1 !important;
+    --bs-btn-border-color: #c7cdd1 !important;
+    --bs-btn-hover-color: #fff !important;
+}
+
+.bg-secondary {
+    --bs-secondary-rgb: 199, 205, 209;
+}
+
+.list-group-item {
+    --bs-list-group-border-color: gray;
+}
+
+.wd-lesson {
+    border-left: 6px solid green !important;
+}
+
+.modules-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+.wd-assignment-list-item {
+    border-left: 6px solid green !important;
+}
+
+.assignments-container {
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+#wd-assignments {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.search-container {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 5px 10px;
+    width: 500px;
+    height: 48px;
+    background-color: #fff;
+}
+
+.search-icon {
+    color: #6c757d;
+    margin-right: 8px;
+    font-size: 30px;
+}
+
+#wd-search-assignment {
+    border: none;
+    outline: none;
+    width: 100%;
+    font-size: 25px;
+    color: #6c757d;
+}
+
+#wd-assignments-editor {
+    max-width: 800px;
+    margin: 0 auto;
+
+}
