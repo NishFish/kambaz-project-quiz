@@ -5,10 +5,12 @@ import Home from "./Home";
 import Assignments from "./Assignments";
 import AssignmentEditor from "./Assignments/Editor";
 import QuizEditor from "./Quizzes/Editor";
+import QuizList from "./Quizzes";
 import { FaAlignJustify } from "react-icons/fa";
 import PeopleTable from "./People/Table";
 import { useParams } from "react-router";
 import { useLocation } from "react-router";
+import QuizDetails from "./Quizzes/QuizDetails";
 
 
 export default function Courses({ courses }: { courses: any[]; }) {
@@ -35,7 +37,9 @@ export default function Courses({ courses }: { courses: any[]; }) {
             <Route path="Zoom" element={<h2>Zoom</h2>} />
             <Route path="Assignments" element={<Assignments />} />
             <Route path="Assignments/:aid" element={<AssignmentEditor />} />
-            <Route path="Quizzes" element={<QuizEditor />} />
+            <Route path="Quizzes" element={<QuizList />} />
+            <Route path="Quizzes/:qid/editor" element={<QuizEditor />} />
+            <Route path="Quizzes/:qid" element={<QuizDetails />} />
             <Route path="People" element={<PeopleTable />} />
           </Routes>
         </div></div>
