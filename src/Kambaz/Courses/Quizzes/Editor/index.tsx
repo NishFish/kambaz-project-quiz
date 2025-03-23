@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { FaEllipsisV } from "react-icons/fa";
-import QuizDetails from "./QuizDetails";
+import QuizDetails from "./QuizDetailsEditor";
 import QuizQuestions from "./QuizQuestions";
 
 const QuizEditor = () => {
