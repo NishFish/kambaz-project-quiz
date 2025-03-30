@@ -1,39 +1,47 @@
-import React, { useState } from "react";
+import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { FaPlay } from "react-icons/fa"; // For the start button for students
 import { BsFillGearFill } from "react-icons/bs"; // For the edit button
+import "./styles.css";
 
-// Default quiz data (you can replace this with your actual quiz data)
+// Default quiz data (fallback)
 const exampleQuizDetails = {
-  type: "Graded Quiz",
+  title: "Graded Quiz",
   points: 100,
   assignmentGroup: "Quizzes",
-  shuffleAnswers: "Yes",
+  shuffleAnswers: false,
   timeLimit: "20 Minutes",
-  multipleAttempts: "No",
+  multipleAttempts: false,
   howManyAttempts: 1,
-  showCorrectAnswers: "No",
+  showCorrectAnswers: false,
   accessCode: "",
-  oneQuestionAtATime: "Yes",
-  webcamRequired: "No",
-  lockQuestionsAfterAnswering: "No",
+  oneQuestionAtATime: true,
+  webcamRequired: false,
+  lockQuestionsAfterAnswering: false,
   dueDate: "2025-03-30",
   availableDate: "2025-03-15",
-  untilDate: "2025-03-28",
+  availableUntilDate: "2025-03-28",
 };
 
 export default function QuizDetails() {
-  const { qid } = useParams();
-  const { cid } = useParams();
-
+  const { cid, qid } = useParams();
+  const navigate = useNavigate();
   const currentUser = useSelector((state: any) => state.accountReducer.currentUser);
 
-  const [quizDetails] = useState(exampleQuizDetails);
-  const navigate = useNavigate();
+  // Retrieve the quiz details from the Redux store.
+  // If not found, fallback to exampleQuizDetails.
+  const quizDetails =
+    useSelector((state: any) =>
+      state.quizzesReducer.quizzes.find((q: any) => q._id === qid)
+    ) || exampleQuizDetails;
+
+  // Helper function to convert booleans to "Yes"/"No"
+  const boolToStr = (value: any) => (value ? "Yes" : "No");
 
   const handleStartQuiz = () => {
     console.log(`Starting quiz: ${qid}`);
+    // Implement quiz start functionality (e.g., navigate to quiz taking interface)
   };
 
   const handleEditQuiz = () => {
@@ -42,6 +50,7 @@ export default function QuizDetails() {
 
   const handlePreviewQuiz = () => {
     console.log(`Previewing quiz: ${qid}`);
+    // Implement quiz preview functionality if needed.
   };
 
   return (
@@ -63,7 +72,7 @@ export default function QuizDetails() {
       <div className="quiz-details-content">
         {/* Quiz name on the left */}
         <div className="quiz-name mb-4">
-          <h3 className="quiz-details-header">{quizDetails.type}</h3>
+          <h3 className="quiz-details-header">{quizDetails.title}</h3>
         </div>
 
         {/* Centered quiz details */}
@@ -74,33 +83,33 @@ export default function QuizDetails() {
           <b>Assignment Group:</b> {quizDetails.assignmentGroup}
         </div>
         <div className="quiz-details-row">
-          <b>Shuffle Answers:</b> {quizDetails.shuffleAnswers}
+          <b>Shuffle Answers:</b> {boolToStr(quizDetails.shuffleAnswers)}
         </div>
         <div className="quiz-details-row">
           <b>Time Limit:</b> {quizDetails.timeLimit}
         </div>
         <div className="quiz-details-row">
-          <b>Multiple Attempts:</b> {quizDetails.multipleAttempts}
+          <b>Multiple Attempts:</b> {boolToStr(quizDetails.multipleAttempts)}
         </div>
-        {quizDetails.multipleAttempts === "Yes" && (
+        {quizDetails.multipleAttempts && (
           <div className="quiz-details-row">
             <b>How Many Attempts:</b> {quizDetails.howManyAttempts}
           </div>
         )}
         <div className="quiz-details-row">
-          <b>Show Correct Answers:</b> {quizDetails.showCorrectAnswers}
+          <b>Show Correct Answers:</b> {boolToStr(quizDetails.showCorrectAnswers)}
         </div>
         <div className="quiz-details-row">
           <b>Access Code:</b> {quizDetails.accessCode || "None"}
         </div>
         <div className="quiz-details-row">
-          <b>One Question at a Time:</b> {quizDetails.oneQuestionAtATime}
+          <b>One Question at a Time:</b> {boolToStr(quizDetails.oneQuestionAtATime)}
         </div>
         <div className="quiz-details-row">
-          <b>Webcam Required:</b> {quizDetails.webcamRequired}
+          <b>Webcam Required:</b> {boolToStr(quizDetails.webcamRequired)}
         </div>
         <div className="quiz-details-row">
-          <b>Lock Questions After Answering:</b> {quizDetails.lockQuestionsAfterAnswering}
+          <b>Lock Questions After Answering:</b> {boolToStr(quizDetails.lockQuestionsAfterAnswering)}
         </div>
         <div className="quiz-details-row">
           <b>Due Date:</b> {quizDetails.dueDate}
@@ -109,7 +118,7 @@ export default function QuizDetails() {
           <b>Available Date:</b> {quizDetails.availableDate}
         </div>
         <div className="quiz-details-row">
-          <b>Until Date:</b> {quizDetails.untilDate}
+          <b>Until Date:</b> {quizDetails.availableUntilDate}
         </div>
 
         {currentUser.role === "STUDENT" && (
