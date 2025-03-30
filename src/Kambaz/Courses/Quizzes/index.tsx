@@ -7,6 +7,7 @@ import { GoTriangleUp } from "react-icons/go"; // For the dropdown triangle
 import ContextMenu from "./QuizContextMenu"; // Import the new ContextMenu component
 import { v4 as uuidv4 } from 'uuid';
 import "./styles.css"
+import { deleteQuiz } from "./reducer";
 
 
 export default function Quizzes() {
@@ -29,7 +30,7 @@ export default function Quizzes() {
   };
 
   const handleDeleteQuiz = (quizId: string) => {
-    console.log(`Deleting quiz: ${quizId}`);
+    dispatch(deleteQuiz(quizId))
   };
 
   const handlePublishQuiz = (quizId: string) => {
