@@ -23,7 +23,6 @@ const assignmentsSlice = createSlice({
                 modules: "Multiple Modules",
             };
             state.assignments = [...state.assignments, newAssignment] as any;
-            console.log(state.assignments)
         },
         deleteAssignment: (state, { payload: assignmentId }) => {
             state.assignments = state.assignments.filter(

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { BsGripVertical } from "react-icons/bs";
 import { FaPlus, FaCheckCircle } from "react-icons/fa"; // Import check circle icon
 import { GoTriangleUp } from "react-icons/go"; // For the dropdown triangle
@@ -8,25 +8,16 @@ import ContextMenu from "./QuizContextMenu"; // Import the new ContextMenu compo
 import { v4 as uuidv4 } from 'uuid';
 import "./styles.css"
 
-const exampleQuiz = {
-  _id: "example-quiz-id",
-  course: "BIO101",
-  title: "Example Quiz 1",
-  dueDate: "2025-03-30",
-  points: 100,
-  numberOfQuestions: 10,
-  published: true,
-  availableDate: "2025-03-15",  // Added available date for the example
-  availableUntilDate: "2025-03-28",  // Added available until date for the example
-  score: 85,  // Added score for the example quiz
-};
 
-export default function Quizzes({ quizzes = [exampleQuiz] }) {
+export default function Quizzes() {
   const { cid } = useParams();
+  const { quizzes } = useSelector((state: any) => state.quizzesReducer);
   const [searchTerm, setSearchTerm] = useState("");
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const currentUser = useSelector((state: any) => state.accountReducer.currentUser);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
@@ -72,15 +63,15 @@ export default function Quizzes({ quizzes = [exampleQuiz] }) {
   return (
     <div id="wd-quizzes" className="quizzes-container">
       <div className="d-flex justify-content-between align-items-center">
-        
-          <input
-            type="text"
-            id="wd-search-quiz"
-            placeholder="Search..."
-            value={searchTerm}
-            onChange={handleSearchChange}
-          />
-        
+
+        <input
+          type="text"
+          id="wd-search-quiz"
+          placeholder="Search..."
+          value={searchTerm}
+          onChange={handleSearchChange}
+        />
+
         {currentUser.role === "FACULTY" && (
           <button
             id="wd-add-quiz-btn"
@@ -108,25 +99,25 @@ export default function Quizzes({ quizzes = [exampleQuiz] }) {
           .map((quiz: any) => (
             <li key={quiz._id} className="list-group-item py-3 px-3 quiz-list-item">
               <div className="d-flex align-items-center justify-content-between">
-              <div className="flex-grow-1">
-                <a
+                <div className="flex-grow-1">
+                  <a
                     href={`#/Kambaz/Courses/${cid}/Quizzes/${quiz._id}`}
                     className="wd-quiz-link fw-bold text-dark text-decoration-none"
-                >
+                  >
                     <div className="wd-quiz-name">{quiz.title}</div> {/* Larger quiz name */}
-                </a>
+                  </a>
 
-                {/* Display Availabil   ity and other quiz details */}
-                <div className="wd-quiz-info">
+                  {/* Display Availabil   ity and other quiz details */}
+                  <div className="wd-quiz-info">
                     <p className="mb-1 text-muted">
-                    <b>Availability</b>: {getAvailability(quiz)} &nbsp; | &nbsp;
-                    <b>Due</b>: {quiz.dueDate} &nbsp; | &nbsp; {quiz.points} points &nbsp; | &nbsp;
-                    <b>Number of questions</b>: {quiz.numberOfQuestions}
+                      <b>Availability</b>: {getAvailability(quiz)} &nbsp; | &nbsp;
+                      <b>Due</b>: {quiz.dueDate} &nbsp; | &nbsp; {quiz.points} points &nbsp; | &nbsp;
+                      <b>Number of questions</b>: {quiz.numberOfQuestions}
                     </p>
-                </div>
+                  </div>
                 </div>
 
-                <div className="d-flex flex-column align-items-end">    
+                <div className="d-flex flex-column align-items-end">
                   {/* Display Score if student */}
                   {currentUser.role === "STUDENT" && quiz.score && (
                     <p className="mb-1 text-muted">
