@@ -29,8 +29,6 @@ export default function QuizDetails() {
   const navigate = useNavigate();
   const currentUser = useSelector((state: any) => state.accountReducer.currentUser);
 
-  // Retrieve the quiz details from the Redux store.
-  // If not found, fallback to exampleQuizDetails.
   const quizDetails =
     useSelector((state: any) =>
       state.quizzesReducer.quizzes.find((q: any) => q._id === qid)

@@ -12,23 +12,30 @@
   border-radius: 5px;
   font-size: 1.25rem;
   font-weight: bold;
-  padding: 15px; /* Space around the text */
+  padding: 15px;
+  /* Space around the text */
   display: flex;
   align-items: center;
-  justify-content: flex-start; /* Align text to the left */
+  justify-content: flex-start;
+  /* Align text to the left */
 }
 
 /* Green Triangle for Drop-Down Icon */
 .quiz-header .dropdown-icon {
-  margin-right: 10px; /* Space between icon and header text */
-  font-size: 1.5rem; /* Adjust size of the triangle */
-  color: #000; /* Black color for the triangle */
-  transform: rotate(180deg); /* Rotate the triangle */
+  margin-right: 10px;
+  /* Space between icon and header text */
+  font-size: 1.5rem;
+  /* Adjust size of the triangle */
+  color: #000;
+  /* Black color for the triangle */
+  transform: rotate(180deg);
+  /* Rotate the triangle */
 }
 
 /* Dark Green Bar on the Left Side of the Quiz List */
 .quiz-list-item {
-  border-left: 5px solid #006400; /* Dark green */
+  border-left: 5px solid #006400;
+  /* Dark green */
 }
 
 /* Padding for quiz items */
@@ -43,45 +50,56 @@
 
 /* Styling for quiz name (big text) */
 .wd-quiz-name {
-  font-size: 1.5rem; /* Big text for the quiz name */
+  font-size: 1.5rem;
+  /* Big text for the quiz name */
   font-weight: bold;
-  color: #333; /* Dark text color */
+  color: #333;
+  /* Dark text color */
 }
 
 /* Styling for other text (smaller) */
 .wd-quiz-info {
-  font-size: 0.875rem; /* Smaller text for other info */
-  color: #6c757d; /* Lighter text color */
+  font-size: 0.875rem;
+  /* Smaller text for other info */
+  color: #6c757d;
+  /* Lighter text color */
 }
 
 /* Space between quiz name and other info */
 .wd-quiz-info p {
-  margin-top: 5px; /* Adds space between lines */
+  margin-top: 5px;
+  /* Adds space between lines */
 }
 
 .quiz-details-container {
   display: flex;
   justify-content: center;
   width: 100%;
-  flex-direction: column; /* Stack elements vertically */
+  flex-direction: column;
+  /* Stack elements vertically */
 }
 
 .buttons-container {
   display: flex;
-  justify-content: center; /* Center the buttons */
-  gap: 20px; /* Space between buttons */
+  justify-content: center;
+  /* Center the buttons */
+  gap: 20px;
+  /* Space between buttons */
   margin-bottom: 30px;
 }
 
 .quiz-details-content {
-  max-width: 900px; /* Adjust the max width of the content */
+  max-width: 900px;
+  /* Adjust the max width of the content */
   width: 100%;
   padding: 20px;
-  margin: 0 auto; /* Center the content horizontally */
+  margin: 0 auto;
+  /* Center the content horizontally */
 }
 
 .quiz-name {
-  text-align: left; /* Align quiz name to the left */
+  text-align: left;
+  /* Align quiz name to the left */
 }
 
 .quiz-details-header {
@@ -91,7 +109,8 @@
 }
 
 .quiz-details-row {
-  text-align: center; /* Center the data */
+  text-align: center;
+  /* Center the data */
   margin-bottom: 15px;
 }
 

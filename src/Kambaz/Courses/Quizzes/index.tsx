@@ -8,6 +8,7 @@ import ContextMenu from "./QuizContextMenu"; // Import the new ContextMenu compo
 import { v4 as uuidv4 } from 'uuid';
 import "./styles.css"
 import { deleteQuiz } from "./reducer";
+import { CiSearch } from "react-icons/ci";
 
 
 export default function Quizzes() {
@@ -64,14 +65,16 @@ export default function Quizzes() {
   return (
     <div id="wd-quizzes" className="quizzes-container">
       <div className="d-flex justify-content-between align-items-center">
-
-        <input
-          type="text"
-          id="wd-search-quiz"
-          placeholder="Search..."
-          value={searchTerm}
-          onChange={handleSearchChange}
-        />
+        <div className="search-container d-flex align-items-center">
+          <CiSearch className="search-icon me-2" />
+          <input
+            type="text"
+            id="wd-search-quiz"
+            placeholder="Search..."
+            value={searchTerm}
+            onChange={handleSearchChange}
+          />
+        </div>
 
         {currentUser.role === "FACULTY" && (
           <button
@@ -84,7 +87,7 @@ export default function Quizzes() {
           </button>
         )}
       </div>
-
+      <hr></hr>
       {/* Header with dropdown triangle */}
       <div className="quiz-header">
         <GoTriangleUp className="dropdown-icon" />
