@@ -1,66 +1,74 @@
 import { useState } from "react";
 import ReactQuill from "react-quill";
-import 'react-quill/dist/quill.snow.css'; // Import styles for the Quill editor
+import 'react-quill/dist/quill.snow.css';
 
 type MultipleChoiceQuestion = {
   question: string;
   choices: { text: string; isCorrect: boolean }[];
 };
 
-const MultipleChoiceEditor = ({ onSave, onCancel }: { onSave: (question: MultipleChoiceQuestion) => void; onCancel: () => void }) => {
+const MultipleChoiceEditor = ({ onSave }: { onSave: (question: MultipleChoiceQuestion) => void }) => {
   const [questionData, setQuestionData] = useState<MultipleChoiceQuestion>({
     question: "",
     choices: [{ text: "", isCorrect: false }],
   });
 
-  // Handle changes for Question content (WYSIWYG editor)
   const handleQuestionChange = (value: string) => {
-    setQuestionData((prev) => ({ ...prev, question: value }));
+    setQuestionData((prev) => {
+      const updatedData = { ...prev, question: value };
+      onSave(updatedData); // Notify parent about data change
+      return updatedData;
+    });
   };
 
-  // Handle choice text change
   const handleChoiceChange = (index: number, text: string) => {
     const newChoices = [...questionData.choices];
     newChoices[index].text = text;
-    setQuestionData((prev) => ({ ...prev, choices: newChoices }));
+    setQuestionData((prev) => {
+      const updatedData = { ...prev, choices: newChoices };
+      onSave(updatedData); // Notify parent about data change
+      return updatedData;
+    });
   };
 
-  // Toggle the correct answer for a choice
   const handleCorrectChange = (index: number) => {
     const newChoices = questionData.choices.map((choice, i) => ({
       ...choice,
       isCorrect: i === index,
     }));
-    setQuestionData((prev) => ({ ...prev, choices: newChoices }));
+    setQuestionData((prev) => {
+      const updatedData = { ...prev, choices: newChoices };
+      onSave(updatedData); // Notify parent about data change
+      return updatedData;
+    });
   };
 
-  // Add a new choice
   const addChoice = () => {
-    setQuestionData((prev) => ({
-      ...prev,
-      choices: [...prev.choices, { text: "", isCorrect: false }],
-    }));
+    setQuestionData((prev) => {
+      const updatedData = {
+        ...prev,
+        choices: [...prev.choices, { text: "", isCorrect: false }],
+      };
+      onSave(updatedData); // Notify parent about data change
+      return updatedData;
+    });
   };
 
-  // Remove a choice
   const removeChoice = (index: number) => {
     const newChoices = questionData.choices.filter((_, i) => i !== index);
-    setQuestionData((prev) => ({ ...prev, choices: newChoices }));
-  };
-
-  // Handle the Save button
-  const handleSave = () => {
-    onSave(questionData);
+    setQuestionData((prev) => {
+      const updatedData = { ...prev, choices: newChoices };
+      onSave(updatedData); // Notify parent about data change
+      return updatedData;
+    });
   };
 
   return (
     <div className="container mt-4 p-4 bg-light border rounded">
-      {/* Instructions for the user with smaller text */}
       <div className="mb-3">
         <i className="fs-10">Enter the question, then multiple answers. Mark the answers that are correct.</i>
       </div>
 
-      {/* Question Text (WYSIWYG Editor) */}
       <div className="mb-3">
         <label className="form-label fw-bold">Question</label>
         <ReactQuill
@@ -72,7 +80,6 @@ const MultipleChoiceEditor = ({ onSave, onCancel }: { onSave: (question: Multipl
         />
       </div>
 
-      {/* Choices Section */}
       <div className="mb-3">
         <label className="form-label fw-bold">Answers</label>
         {questionData.choices.map((choice, index) => (
@@ -80,34 +87,20 @@ const MultipleChoiceEditor = ({ onSave, onCancel }: { onSave: (question: Multipl
             <input
               type="text"
               className="form-control me-2"
+              placeholder={`Choice ${index + 1}`}
               value={choice.text}
               onChange={(e) => handleChoiceChange(index, e.target.value)}
-              placeholder={`Answer ${index + 1}`}
             />
-            <div className="form-check">
-              <input
-                type="radio"
-                className="form-check-input"
-                checked={choice.isCorrect}
-                onChange={() => handleCorrectChange(index)}
-              />
-              <label className="form-check-label">Correct</label>
-            </div>
-            {/* Remove Choice Button */}
-            {questionData.choices.length > 1 && (
-              <button
-                type="button"
-                className="btn btn-danger ms-2"
-                onClick={() => removeChoice(index)}
-              >
-                Remove
-              </button>
-            )}
+            <input
+              type="radio"
+              name="correctAnswer"
+              checked={choice.isCorrect}
+              onChange={() => handleCorrectChange(index)}
+            />
+            <button className="btn btn-danger btn-sm ms-2" onClick={() => removeChoice(index)}>-</button>
           </div>
         ))}
-        <button type="button" className="btn btn-secondary" onClick={addChoice}>
-          Add Answer
-        </button>
+        <button className="btn btn-secondary mt-2" onClick={addChoice}>Add Choice</button>
       </div>
     </div>
   );

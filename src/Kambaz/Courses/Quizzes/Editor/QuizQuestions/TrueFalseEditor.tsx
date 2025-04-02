@@ -7,7 +7,7 @@ type TrueFalseQuestion = {
   isCorrect: boolean; // Boolean to track if the answer is True or False
 };
 
-const TrueFalseEditor = ({ onSave, onCancel }: { onSave: (question: TrueFalseQuestion) => void; onCancel: () => void }) => {
+const TrueFalseEditor = ({ onSave }: { onSave: (question: TrueFalseQuestion) => void }) => {
   const [questionData, setQuestionData] = useState<TrueFalseQuestion>({
     question: "",
     isCorrect: true, // Default to True
@@ -16,16 +16,16 @@ const TrueFalseEditor = ({ onSave, onCancel }: { onSave: (question: TrueFalseQue
   // Handle changes for Question content (WYSIWYG editor)
   const handleQuestionChange = (value: string) => {
     setQuestionData((prev) => ({ ...prev, question: value }));
+    onSave({ ...questionData, question: value }); // Notify parent about data change
   };
 
   // Toggle the correct answer for True or False
   const handleCorrectChange = (value: boolean) => {
-    setQuestionData((prev) => ({ ...prev, isCorrect: value }));
-  };
-
-  // Handle the Save button
-  const handleSave = () => {
-    onSave(questionData);
+    setQuestionData((prev) => {
+      const updatedData = { ...prev, isCorrect: value };
+      onSave(updatedData); // Notify parent about data change
+      return updatedData;
+    });
   };
 
   return (

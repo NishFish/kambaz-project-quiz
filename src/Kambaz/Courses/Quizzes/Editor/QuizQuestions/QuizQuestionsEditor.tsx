@@ -1,15 +1,42 @@
 import { useState } from "react";
-import MultipleChoiceEditor from "./MultipleChoiceEditor"; // Import your MultipleChoiceEditor
+import MultipleChoiceEditor from "./MultipleChoiceEditor";
 import TrueFalseEditor from "./TrueFalseEditor";
 import FillInTheBlankEditor from "./FillInTheBlankEditor";
+import { useDispatch } from "react-redux";
+import { useParams } from "react-router-dom";
+import { addQuestion } from "./reducer";
 
 const NewQuestionEditor = ({ onClose }: { onClose: () => void }) => {
-  // State to track selected question type
-  const [questionType, setQuestionType] = useState<string>("Multiple Choice");
+  const dispatch = useDispatch();
+  const { qid } = useParams(); // Extracts the quiz ID from the URL
 
-  // Handle change in question type dropdown
-  const handleQuestionTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setQuestionType(e.target.value);
+  const [questionType, setQuestionType] = useState("Multiple Choice");
+  const [questionName, setQuestionName] = useState("");
+  const [points, setPoints] = useState(0);
+  const [questionData, setQuestionData] = useState<any>(null);
+
+  // Handles changing question type
+  const handleQuestionTypeChange = (event: any) => {
+    setQuestionType(event.target.value);
+    setQuestionData(null); // Reset stored question data
+  };
+
+  // Save question data
+  const handleSaveQuestion = () => {
+    if (!questionData || !questionName.trim()) {
+      alert("Please complete the question details before saving.");
+      return;
+    }
+
+    const completeQuestion = {
+      ...questionData,
+      name: questionName,
+      points,
+      type: questionType,
+    };
+
+    dispatch(addQuestion({ quiz: qid, question: completeQuestion }));
+    onClose(); // Close modal after saving
   };
 
   return (
@@ -20,28 +47,23 @@ const NewQuestionEditor = ({ onClose }: { onClose: () => void }) => {
       aria-labelledby="exampleModalLabel"
       aria-hidden="true"
     >
-      <div className="modal-dialog modal-lg"> {/* Add modal-lg class for wider modal */}
+      <div className="modal-dialog modal-lg">
         <div className="modal-content">
           <div className="modal-header">
-            {/* Header Section with editable fields */}
             <div className="d-flex justify-content-between w-100">
               <div className="d-flex w-75">
-                {/* Question Name on the left */}
                 <div className="me-3 w-50">
                   <input
                     type="text"
                     className="form-control"
                     placeholder="Enter question name"
+                    value={questionName}
+                    onChange={(e) => setQuestionName(e.target.value)}
                   />
                 </div>
 
-                {/* Question Type dropdown */}
                 <div className="w-50">
-                  <select
-                    className="form-select"
-                    value={questionType}
-                    onChange={handleQuestionTypeChange}
-                  >
+                  <select className="form-select" value={questionType} onChange={handleQuestionTypeChange}>
                     <option>Multiple Choice</option>
                     <option>True/False</option>
                     <option>Fill in the Blank</option>
@@ -49,37 +71,35 @@ const NewQuestionEditor = ({ onClose }: { onClose: () => void }) => {
                 </div>
               </div>
 
-              {/* Points field on the right */}
               <div className="w-25">
                 <input
                   type="number"
                   className="form-control"
                   placeholder="Points"
+                  value={points}
+                  onChange={(e) => setPoints(Number(e.target.value))}
                 />
               </div>
             </div>
           </div>
 
-          {/* Separator */}
           <hr />
 
-          {/* Render the appropriate editor based on selected question type */}
           {questionType === "Multiple Choice" && (
-            <MultipleChoiceEditor onSave={() => {}} onCancel={onClose} />
+            <MultipleChoiceEditor onSave={setQuestionData} />
           )}
           {questionType === "True/False" && (
-            <TrueFalseEditor onSave={() => {}} onCancel={onClose} />
+            <TrueFalseEditor onSave={setQuestionData} />
           )}
           {questionType === "Fill in the Blank" && (
-            <FillInTheBlankEditor onSave={() => {}} onCancel={onClose} />
+            <FillInTheBlankEditor onSave={setQuestionData} />
           )}
 
-          {/* Footer Section with action buttons */}
           <div className="modal-footer">
             <button type="button" className="btn btn-secondary" onClick={onClose}>
               Close
             </button>
-            <button type="button" className="btn btn-primary">
+            <button type="button" className="btn btn-primary" onClick={handleSaveQuestion}>
               Save Question
             </button>
           </div>

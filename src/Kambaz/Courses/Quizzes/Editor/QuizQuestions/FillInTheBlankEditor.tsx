@@ -7,7 +7,7 @@ type FillInTheBlankQuestion = {
   blanks: string[]; // List of possible correct answers for the blank
 };
 
-const FillInTheBlankEditor = ({ onSave, onCancel }: { onSave: (question: FillInTheBlankQuestion) => void; onCancel: () => void }) => {
+const FillInTheBlankEditor = ({ onSave }: { onSave: (question: FillInTheBlankQuestion) => void }) => {
   const [questionData, setQuestionData] = useState<FillInTheBlankQuestion>({
     question: "",
     blanks: [""], // Start with one blank answer field
@@ -16,6 +16,7 @@ const FillInTheBlankEditor = ({ onSave, onCancel }: { onSave: (question: FillInT
   // Handle changes for Question content (WYSIWYG editor)
   const handleQuestionChange = (value: string) => {
     setQuestionData((prev) => ({ ...prev, question: value }));
+    onSave({ ...questionData, question: value }); // Notify parent about data change
   };
 
   // Handle blank answer change
@@ -23,25 +24,16 @@ const FillInTheBlankEditor = ({ onSave, onCancel }: { onSave: (question: FillInT
     const newBlanks = [...questionData.blanks];
     newBlanks[index] = text;
     setQuestionData((prev) => ({ ...prev, blanks: newBlanks }));
+    onSave({ ...questionData, blanks: newBlanks }); // Notify parent about data change
   };
 
   // Add a new blank answer
   const addBlank = () => {
-    setQuestionData((prev) => ({
-      ...prev,
-      blanks: [...prev.blanks, ""], // Add a new blank field
-    }));
-  };
-
-  // Remove a blank answer
-  const removeBlank = (index: number) => {
-    const newBlanks = questionData.blanks.filter((_, i) => i !== index);
-    setQuestionData((prev) => ({ ...prev, blanks: newBlanks }));
-  };
-
-  // Handle the Save button
-  const handleSave = () => {
-    onSave(questionData);
+    setQuestionData((prev) => {
+      const updatedBlanks = [...prev.blanks, ""];
+      onSave({ ...questionData, blanks: updatedBlanks }); // Notify parent about data change
+      return { ...prev, blanks: updatedBlanks };
+    });
   };
 
   return (
@@ -75,16 +67,6 @@ const FillInTheBlankEditor = ({ onSave, onCancel }: { onSave: (question: FillInT
               onChange={(e) => handleBlankChange(index, e.target.value)}
               placeholder={`Possible Answer ${index + 1}`}
             />
-            {/* Remove Blank Button */}
-            {questionData.blanks.length > 1 && (
-              <button
-                type="button"
-                className="btn btn-danger ms-2"
-                onClick={() => removeBlank(index)}
-              >
-                Remove
-              </button>
-            )}
           </div>
         ))}
         <button type="button" className="btn btn-secondary" onClick={addBlank}>
