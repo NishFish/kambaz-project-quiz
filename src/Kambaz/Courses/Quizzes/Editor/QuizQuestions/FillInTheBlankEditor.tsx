@@ -1,49 +1,67 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ReactQuill from "react-quill";
-import 'react-quill/dist/quill.snow.css'; // Import styles for the Quill editor
+import "react-quill/dist/quill.snow.css";
 
-type FillInTheBlankQuestion = {
+export type FillInTheBlankQuestion = {
   question: string;
   blanks: string[]; // List of possible correct answers for the blank
+  id?: string;
 };
 
-const FillInTheBlankEditor = ({ onSave }: { onSave: (question: FillInTheBlankQuestion) => void }) => {
-  const [questionData, setQuestionData] = useState<FillInTheBlankQuestion>({
-    question: "",
-    blanks: [""], // Start with one blank answer field
-  });
+interface FillInTheBlankEditorProps {
+  onSave: (question: FillInTheBlankQuestion) => void;
+  initialData?: FillInTheBlankQuestion | null;
+}
 
-  // Handle changes for Question content (WYSIWYG editor)
+const FillInTheBlankEditor = ({ onSave, initialData }: FillInTheBlankEditorProps) => {
+  const [questionData, setQuestionData] = useState<FillInTheBlankQuestion>(
+    initialData || { question: "", blanks: [""] }
+  );
+
+  useEffect(() => {
+    if (initialData) {
+      setQuestionData(initialData);
+    }
+  }, [initialData]);
+
   const handleQuestionChange = (value: string) => {
-    setQuestionData((prev) => ({ ...prev, question: value }));
-    onSave({ ...questionData, question: value }); // Notify parent about data change
+    const updated = { ...questionData, question: value };
+    setQuestionData(updated);
+    onSave(updated);
   };
 
-  // Handle blank answer change
   const handleBlankChange = (index: number, text: string) => {
     const newBlanks = [...questionData.blanks];
     newBlanks[index] = text;
-    setQuestionData((prev) => ({ ...prev, blanks: newBlanks }));
-    onSave({ ...questionData, blanks: newBlanks }); // Notify parent about data change
+    const updated = { ...questionData, blanks: newBlanks };
+    setQuestionData(updated);
+    onSave(updated);
   };
 
-  // Add a new blank answer
   const addBlank = () => {
-    setQuestionData((prev) => {
-      const updatedBlanks = [...prev.blanks, ""];
-      onSave({ ...questionData, blanks: updatedBlanks }); // Notify parent about data change
-      return { ...prev, blanks: updatedBlanks };
-    });
+    const updatedBlanks = [...questionData.blanks, ""];
+    const updated = { ...questionData, blanks: updatedBlanks };
+    setQuestionData(updated);
+    onSave(updated);
+  };
+
+  const removeBlank = (index: number) => {
+    if (questionData.blanks.length > 1) { // Prevent removing the last blank
+      const newBlanks = questionData.blanks.filter((_, i) => i !== index);
+      const updated = { ...questionData, blanks: newBlanks };
+      setQuestionData(updated);
+      onSave(updated);
+    }
   };
 
   return (
     <div className="container mt-4 p-4 bg-light border rounded">
-      {/* Instructions for the user */}
       <div className="mb-3">
-        <i className="fs-6">Enter the question with a blank, then specify possible correct answers.</i>
+        <i className="fs-6">
+          Enter the question with a blank, then specify possible correct answers.
+        </i>
       </div>
 
-      {/* Question Text (WYSIWYG Editor) */}
       <div className="mb-3">
         <label className="form-label fw-bold">Question</label>
         <ReactQuill
@@ -51,11 +69,10 @@ const FillInTheBlankEditor = ({ onSave }: { onSave: (question: FillInTheBlankQue
           onChange={handleQuestionChange}
           placeholder="Enter question description"
           theme="snow"
-          modules={{ toolbar: [['bold', 'italic', 'underline'], ['link']] }}
+          modules={{ toolbar: [["bold", "italic", "underline"], ["link"]] }}
         />
       </div>
 
-      {/* Blank Answers Section */}
       <div className="mb-3">
         <label className="form-label fw-bold">Possible Answers for the Blank</label>
         {questionData.blanks.map((blank, index) => (
@@ -67,9 +84,17 @@ const FillInTheBlankEditor = ({ onSave }: { onSave: (question: FillInTheBlankQue
               onChange={(e) => handleBlankChange(index, e.target.value)}
               placeholder={`Possible Answer ${index + 1}`}
             />
+            {questionData.blanks.length > 1 && (
+              <button
+                className="btn btn-danger btn-sm ms-2"
+                onClick={() => removeBlank(index)}
+              >
+                -
+              </button>
+            )}
           </div>
         ))}
-        <button type="button" className="btn btn-secondary" onClick={addBlank}>
+        <button type="button" className="btn btn-secondary mt-2" onClick={addBlank}>
           Add Another Possible Answer
         </button>
       </div>

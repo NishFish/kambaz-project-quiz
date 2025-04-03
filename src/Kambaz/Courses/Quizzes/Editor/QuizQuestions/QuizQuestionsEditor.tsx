@@ -1,42 +1,64 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import MultipleChoiceEditor from "./MultipleChoiceEditor";
 import TrueFalseEditor from "./TrueFalseEditor";
 import FillInTheBlankEditor from "./FillInTheBlankEditor";
 import { useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
-import { addQuestion } from "./reducer";
+import { addQuestion, updateQuestion } from "./reducer";
 
-const NewQuestionEditor = ({ onClose }: { onClose: () => void }) => {
+interface NewQuestionEditorProps {
+  onClose: () => void;
+  initialQuestion?: any; // If editing, the question data is passed here.
+}
+
+const NewQuestionEditor = ({ onClose, initialQuestion }: NewQuestionEditorProps) => {
   const dispatch = useDispatch();
-  const { qid } = useParams(); // Extracts the quiz ID from the URL
+  const { qid } = useParams(); // Extract quiz ID from URL
 
-  const [questionType, setQuestionType] = useState("Multiple Choice");
-  const [questionName, setQuestionName] = useState("");
-  const [points, setPoints] = useState(0);
-  const [questionData, setQuestionData] = useState<any>(null);
+  // If editing, use initialQuestion's fields; otherwise, default values.
+  const [questionType, setQuestionType] = useState(initialQuestion ? initialQuestion.type : "Multiple Choice");
+  const [questionName, setQuestionName] = useState(initialQuestion ? initialQuestion.name : "");
+  const [points, setPoints] = useState(initialQuestion ? initialQuestion.points : 0);
+  const [questionData, setQuestionData] = useState<any>(initialQuestion || null);
 
-  // Handles changing question type
+  // When initialQuestion changes (editing), update state accordingly.
+  useEffect(() => {
+    if (initialQuestion) {
+      setQuestionType(initialQuestion.type);
+      setQuestionName(initialQuestion.name);
+      setPoints(initialQuestion.points);
+      setQuestionData(initialQuestion);
+    }
+  }, [initialQuestion]);
+
+  // Changing question type resets child data.
   const handleQuestionTypeChange = (event: any) => {
     setQuestionType(event.target.value);
-    setQuestionData(null); // Reset stored question data
+    setQuestionData(null);
   };
 
-  // Save question data
+  // When saving, merge the child data with the title, points, and preserve the id if available.
   const handleSaveQuestion = () => {
     if (!questionData || !questionName.trim()) {
       alert("Please complete the question details before saving.");
       return;
     }
 
+    // Preserve the id if this is an edit.
     const completeQuestion = {
       ...questionData,
+      id: initialQuestion?.id || questionData.id,
       name: questionName,
       points,
       type: questionType,
     };
 
-    dispatch(addQuestion({ quiz: qid, question: completeQuestion }));
-    onClose(); // Close modal after saving
+    if (completeQuestion.id) {
+      dispatch(updateQuestion({ quiz: qid, question: completeQuestion }));
+    } else {
+      dispatch(addQuestion({ quiz: qid, question: completeQuestion }));
+    }
+    onClose();
   };
 
   return (
@@ -61,7 +83,6 @@ const NewQuestionEditor = ({ onClose }: { onClose: () => void }) => {
                     onChange={(e) => setQuestionName(e.target.value)}
                   />
                 </div>
-
                 <div className="w-50">
                   <select className="form-select" value={questionType} onChange={handleQuestionTypeChange}>
                     <option>Multiple Choice</option>
@@ -70,7 +91,6 @@ const NewQuestionEditor = ({ onClose }: { onClose: () => void }) => {
                   </select>
                 </div>
               </div>
-
               <div className="w-25">
                 <input
                   type="number"
@@ -86,13 +106,13 @@ const NewQuestionEditor = ({ onClose }: { onClose: () => void }) => {
           <hr />
 
           {questionType === "Multiple Choice" && (
-            <MultipleChoiceEditor onSave={setQuestionData} />
+            <MultipleChoiceEditor onSave={setQuestionData} initialData={questionData} />
           )}
           {questionType === "True/False" && (
-            <TrueFalseEditor onSave={setQuestionData} />
+            <TrueFalseEditor onSave={setQuestionData} initialData={questionData} />
           )}
           {questionType === "Fill in the Blank" && (
-            <FillInTheBlankEditor onSave={setQuestionData} />
+            <FillInTheBlankEditor onSave={setQuestionData} initialData={questionData} />
           )}
 
           <div className="modal-footer">
