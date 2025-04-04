@@ -8,7 +8,7 @@ import { addQuestion, updateQuestion } from "./reducer";
 
 interface NewQuestionEditorProps {
   onClose: () => void;
-  initialQuestion?: any; // If editing, the question data is passed here.
+  initialQuestion?: any;
 }
 
 const NewQuestionEditor = ({ onClose, initialQuestion }: NewQuestionEditorProps) => {

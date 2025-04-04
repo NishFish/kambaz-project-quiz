@@ -6,6 +6,7 @@
             {
                 "id": "questions-1-q1",
                 "type": "Multiple Choice",
+                "name": "country quiz",
                 "question": "What is the capital of France?",
                 "choices": [
                     {
@@ -30,6 +31,7 @@
             {
                 "id": "questions-1-q2",
                 "type": "True/False",
+                "name": "sky quiz",
                 "question": "The sky is blue.",
                 "isCorrect": true,
                 "points": 5
@@ -37,6 +39,7 @@
             {
                 "id": "questions-1-q3",
                 "type": "Fill in the Blank",
+                "name": "chemical quiz",
                 "question": "The chemical formula for water is _____ .",
                 "blanks": [
                     "H2O",
