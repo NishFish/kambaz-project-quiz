@@ -1,27 +1,31 @@
 import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import MultipleChoiceEditor from "./MultipleChoiceEditor";
 import TrueFalseEditor from "./TrueFalseEditor";
 import FillInTheBlankEditor from "./FillInTheBlankEditor";
-import { useDispatch } from "react-redux";
-import { useParams } from "react-router-dom";
-import { addQuestion, updateQuestion } from "./reducer";
 
 interface NewQuestionEditorProps {
   onClose: () => void;
+  onSaveDraft: (question: any) => void;
   initialQuestion?: any;
 }
 
-const NewQuestionEditor = ({ onClose, initialQuestion }: NewQuestionEditorProps) => {
-  const dispatch = useDispatch();
-  const { qid } = useParams(); // Extract quiz ID from URL
+const NewQuestionEditor = ({
+  onClose,
+  initialQuestion,
+  onSaveDraft,
+}: NewQuestionEditorProps) => {
+  const { qid } = useParams();
 
-  // If editing, use initialQuestion's fields; otherwise, default values.
-  const [questionType, setQuestionType] = useState(initialQuestion ? initialQuestion.type : "Multiple Choice");
-  const [questionName, setQuestionName] = useState(initialQuestion ? initialQuestion.name : "");
+  const [questionType, setQuestionType] = useState(
+    initialQuestion ? initialQuestion.type : "Multiple Choice"
+  );
+  const [questionName, setQuestionName] = useState(
+    initialQuestion ? initialQuestion.name : ""
+  );
   const [points, setPoints] = useState(initialQuestion ? initialQuestion.points : 0);
-  const [questionData, setQuestionData] = useState<any>(initialQuestion || null);
+  const [questionData, setQuestionData] = useState(initialQuestion || null);
 
-  // When initialQuestion changes (editing), update state accordingly.
   useEffect(() => {
     if (initialQuestion) {
       setQuestionType(initialQuestion.type);
@@ -31,33 +35,26 @@ const NewQuestionEditor = ({ onClose, initialQuestion }: NewQuestionEditorProps)
     }
   }, [initialQuestion]);
 
-  // Changing question type resets child data.
   const handleQuestionTypeChange = (event: any) => {
     setQuestionType(event.target.value);
     setQuestionData(null);
   };
 
-  // When saving, merge the child data with the title, points, and preserve the id if available.
   const handleSaveQuestion = () => {
     if (!questionData || !questionName.trim()) {
       alert("Please complete the question details before saving.");
       return;
     }
 
-    // Preserve the id if this is an edit.
     const completeQuestion = {
       ...questionData,
-      id: initialQuestion?.id || questionData.id,
+      id: initialQuestion?.id || questionData.id || Date.now(),
       name: questionName,
       points,
       type: questionType,
     };
 
-    if (completeQuestion.id) {
-      dispatch(updateQuestion({ quiz: qid, question: completeQuestion }));
-    } else {
-      dispatch(addQuestion({ quiz: qid, question: completeQuestion }));
-    }
+    onSaveDraft(completeQuestion);
     onClose();
   };
 
@@ -84,7 +81,11 @@ const NewQuestionEditor = ({ onClose, initialQuestion }: NewQuestionEditorProps)
                   />
                 </div>
                 <div className="w-50">
-                  <select className="form-select" value={questionType} onChange={handleQuestionTypeChange}>
+                  <select
+                    className="form-select"
+                    value={questionType}
+                    onChange={handleQuestionTypeChange}
+                  >
                     <option>Multiple Choice</option>
                     <option>True/False</option>
                     <option>Fill in the Blank</option>

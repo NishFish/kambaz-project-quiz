@@ -45,9 +45,18 @@ const questionsSlice = createSlice({
                     (q) => q.id !== questionId
                 );
             }
-        }
-    }
-});
+        },
+        updateQuestionSet: (state, { payload: { quiz, questions } }) => {
+            const questionSet = state.questionSets.find((qs) => qs.quiz === quiz);
+            if (questionSet) {
+                questionSet.questions = questions;
+            } else {
+                state.questionSets.push({ _id: uuidv4(), quiz, questions });
+            }
+        },
+    },
+}
+);
 
-export const { addQuestionSet, addQuestion, updateQuestion, deleteQuestion } = questionsSlice.actions;
+export const { addQuestionSet, addQuestion, updateQuestion, deleteQuestion, updateQuestionSet } = questionsSlice.actions;
 export default questionsSlice.reducer;
