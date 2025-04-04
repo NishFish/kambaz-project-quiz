@@ -47,8 +47,7 @@ export default function QuizDetails() {
   };
 
   const handlePreviewQuiz = () => {
-    console.log(`Previewing quiz: ${qid}`);
-    // Implement quiz preview functionality if needed.
+    navigate(`/Kambaz/Courses/${cid}/Quizzes/${qid}/preview`);
   };
 
   return (

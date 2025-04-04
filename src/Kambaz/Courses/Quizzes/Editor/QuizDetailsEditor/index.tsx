@@ -43,29 +43,24 @@ export default function QuizEditor() {
   });
 
 
-  // When editing, pre-populate state with the existing quiz values
   useEffect(() => {
     if (existingQuiz) {
       setQuiz(existingQuiz);
     }
   }, [existingQuiz]);
 
-  // Handler for text, number, and datetime fields
   const handleChange = (e: any) => {
     setQuiz({ ...quiz, [e.target.id]: e.target.value });
   };
 
-  // Handler for checkboxes
   const handleCheckboxChange = (e: any) => {
     setQuiz({ ...quiz, [e.target.id]: e.target.checked });
   };
 
   const handleSave = () => {
     if (existingQuiz) {
-      // Update existing quiz
       dispatch(updateQuiz(quiz));
     } else {
-      // Add new quiz with a generated _id
       dispatch(addQuiz({ ...quiz, _id: uuidv4(), course: cid }));
     }
     navigate(`/Kambaz/Courses/${cid}/Quizzes`);

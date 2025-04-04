@@ -11,6 +11,7 @@ import PeopleTable from "./People/Table";
 import { useParams } from "react-router";
 import { useLocation } from "react-router";
 import QuizDetails from "./Quizzes/QuizDetails";
+import QuizPreview from "./Quizzes/Editor/Preview";
 
 
 export default function Courses({ courses }: { courses: any[]; }) {
@@ -39,6 +40,7 @@ export default function Courses({ courses }: { courses: any[]; }) {
             <Route path="Assignments/:aid" element={<AssignmentEditor />} />
             <Route path="Quizzes" element={<QuizList />} />
             <Route path="Quizzes/:qid/editor" element={<QuizEditor />} />
+            <Route path="Quizzes/:qid/preview" element={<QuizPreview />} />
             <Route path="Quizzes/:qid" element={<QuizDetails />} />
             <Route path="People" element={<PeopleTable />} />
           </Routes>
