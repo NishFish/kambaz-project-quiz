@@ -39,7 +39,7 @@ export default function QuizEditor() {
     availableUntilDate: "",
     course: cid,
     published: false,
-    score: 0,
+    score: [],
   });
 
 

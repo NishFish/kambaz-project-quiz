@@ -47,7 +47,6 @@ export default function Quizzes() {
   };
 
 
-  // Function to calculate availability status
   const getAvailability = (quiz: any) => {
     const currentDate = new Date();
 
@@ -62,7 +61,7 @@ export default function Quizzes() {
       return `Not available until ${availableDate.toLocaleDateString()}`;
     }
   };
-
+  console.log(quizzes)
   return (
     <div id="wd-quizzes" className="quizzes-container">
       <div className="d-flex justify-content-between align-items-center">
@@ -89,7 +88,6 @@ export default function Quizzes() {
         )}
       </div>
       <hr></hr>
-      {/* Header with dropdown triangle */}
       <div className="quiz-header">
         <GoTriangleUp className="dropdown-icon" />
         <span>Quizzes</span>
@@ -109,10 +107,9 @@ export default function Quizzes() {
                     href={`#/Kambaz/Courses/${cid}/Quizzes/${quiz._id}`}
                     className="wd-quiz-link fw-bold text-dark text-decoration-none"
                   >
-                    <div className="wd-quiz-name">{quiz.title}</div> {/* Larger quiz name */}
+                    <div className="wd-quiz-name">{quiz.title}</div>
                   </a>
 
-                  {/* Display Availability and other quiz details */}
                   <div className="wd-quiz-info">
                     <p className="mb-1 text-muted">
                       <b>Availability</b>: {getAvailability(quiz)} &nbsp; | &nbsp;
@@ -123,10 +120,9 @@ export default function Quizzes() {
                 </div>
 
                 <div className="d-flex flex-column align-items-end">
-                  {/* Display Score if student */}
                   {currentUser.role === "STUDENT" && quiz.score && (
                     <p className="mb-1 text-muted">
-                      <b>Score</b>: {quiz.score}
+                      <b>Score</b>: {quiz.score.length > 0 ? quiz.score[quiz.score.length - 1] : "Not attempted yet"}
                     </p>
                   )}
                 </div>

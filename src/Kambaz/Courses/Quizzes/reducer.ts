@@ -32,7 +32,7 @@ const quizzesSlice = createSlice({
                 availableUntilDate: quiz.availableUntilDate || "",
                 course: quiz.course,
                 published: quiz.published,
-                score: quiz.score || 0
+                score: quiz.score || []
             };
             state.quizzes = [...state.quizzes, newQuiz];
         },
@@ -59,9 +59,25 @@ const quizzesSlice = createSlice({
                     : q
             );
         },
+        updateScore: (state, { payload: { quizId, newScore } }) => {
+            state.quizzes = state.quizzes.map((q) => {
+                if (q._id === quizId) {
+                    const updatedScoreArray = Array.isArray(q.score)
+                        ? [...q.score, newScore]
+                        : [newScore];
+
+                    return {
+                        ...q,
+                        score: updatedScoreArray,
+                        howManyAttempts: (q.howManyAttempts || 0) + 1,
+                    };
+                }
+                return q;
+            });
+        },
 
     },
 });
 
-export const { addQuiz, deleteQuiz, updateQuiz, editQuiz, togglePublish } = quizzesSlice.actions;
+export const { addQuiz, deleteQuiz, updateQuiz, editQuiz, togglePublish, updateScore } = quizzesSlice.actions;
 export default quizzesSlice.reducer;

@@ -38,8 +38,7 @@ export default function QuizDetails() {
   const boolToStr = (value: any) => (value ? "Yes" : "No");
 
   const handleStartQuiz = () => {
-    console.log(`Starting quiz: ${qid}`);
-    // Implement quiz start functionality (e.g., navigate to quiz taking interface)
+    navigate(`/Kambaz/Courses/${cid}/Quizzes/${qid}/preview`);
   };
 
   const handleEditQuiz = () => {

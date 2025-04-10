@@ -1,10 +1,16 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { updateScore } from "../../reducer";
 
 export default function QuizPreview() {
     const { cid, qid } = useParams();
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const currentUser = useSelector((state: any) => state.accountReducer.currentUser);
+    const currentQuiz = useSelector((state: any) =>
+        state.quizzesReducer.quizzes.find((quiz: any) => quiz._id === qid)
+    );
     const questionSet = useSelector((state: any) =>
         state.questionReducer.questionSets.find((qs: any) => qs.quiz === qid)
     );
@@ -12,7 +18,8 @@ export default function QuizPreview() {
 
     const [currentIndex, setCurrentIndex] = useState(0);
     const [answers, setAnswers] = useState<Record<string, any>>({});
-
+    const [submitted, setSubmitted] = useState(false);
+    const [earned, setEarned] = useState<number | null>(null);
     const currentQuestion = questions[currentIndex];
 
     const handleAnswerChange = (value: any) => {
@@ -30,13 +37,53 @@ export default function QuizPreview() {
         }
     };
 
+    const calculateEarned = () => {
+        return questions.reduce((sum: number, q: any) => {
+            const ans = answers[q.id];
+
+            if (q.type === "Multiple Choice") {
+                const choice = q.choices.find((c: any) => c.text === ans);
+                if (choice?.isCorrect) return sum + q.points;
+            } else if (q.type === "True/False") {
+                const boolAns = ans === "True";
+                if (boolAns === q.isCorrect) return sum + q.points;
+            } else if (q.type === "Fill in the Blank") {
+                const txt = (ans || "").trim().toLowerCase();
+                if (q.blanks.some((b: string) => b.toLowerCase() === txt)) return sum + q.points;
+            }
+
+            return sum;
+        }, 0);
+    };
+
+
     const handleNext = () => {
         if (currentIndex < questions.length - 1) {
             setCurrentIndex(currentIndex + 1);
         } else {
-            navigate(`/Kambaz/Courses/${cid}/Quizzes/`);
+            if (!submitted) {
+                const score = calculateEarned();
+                if (score === undefined) {
+                    console.error("Score calculation failed!");
+                    return;
+                }
+                setEarned(score);
+                setSubmitted(true);
+
+                const updatedScoreArray = Array.isArray(currentQuiz.score)
+                    ? [...currentQuiz.score, score]
+                    : [score];
+
+                dispatch(updateScore({
+                    quizId: qid, // Pass the calculated score
+                }));
+            } else {
+                navigate(`/Kambaz/Courses/${cid}/Quizzes/`);
+            }
         }
     };
+
+
 
     const handleEditQuiz = () => {
         navigate(`/Kambaz/Courses/${cid}/Quizzes/${qid}/editor`);
@@ -59,6 +106,7 @@ export default function QuizPreview() {
                                         className="form-check-input"
                                         value={choice.text}
                                         checked={answers[currentQuestion.id] === choice.text}
+                                        disabled={submitted}
                                         onChange={(e) => handleAnswerChange(e.target.value)}
                                     />
                                     <label className="form-check-label">{choice.text}</label>
@@ -78,6 +126,7 @@ export default function QuizPreview() {
                                     className="form-check-input"
                                     value={val}
                                     checked={answers[currentQuestion.id] === val}
+                                    disabled={submitted}
                                     onChange={(e) => handleAnswerChange(e.target.value)}
                                 />
                                 <label className="form-check-label">{val}</label>
@@ -94,6 +143,7 @@ export default function QuizPreview() {
                             className="form-control mt-3"
                             placeholder="Enter your answer"
                             value={answers[currentQuestion.id] || ""}
+                            disabled={submitted}
                             onChange={(e) => handleAnswerChange(e.target.value)}
                         />
                     </div>
@@ -105,7 +155,11 @@ export default function QuizPreview() {
 
     return (
         <div className="container mt-4">
-            <h2 className="mb-4">Quiz Preview</h2>
+            {currentUser.role === "FACULTY" ? (
+                <h2 className="mb-4">Quiz Preview</h2>
+            ) : (
+                <h2 className="mb-4">{currentQuiz?.title}</h2>
+            )}
 
             {questions.length === 0 ? (
                 <div className="alert alert-warning">No questions available.</div>
@@ -123,9 +177,7 @@ export default function QuizPreview() {
                             Question {currentIndex + 1} of {questions.length}
                         </span>
                         {currentQuestion && currentQuestion.points !== undefined && (
-                            <span>
-                                {currentQuestion.points} pts
-                            </span>
+                            <span>{currentQuestion.points} pts</span>
                         )}
                     </div>
                     <div className="card p-4 mb-3">{renderQuestion()}</div>
@@ -133,19 +185,41 @@ export default function QuizPreview() {
                         <button
                             className="btn btn-secondary"
                             onClick={handleBack}
-                            disabled={currentIndex === 0}
+                            disabled={currentIndex === 0 || submitted}
                         >
                             Back
                         </button>
-                        <button className="btn btn-primary" onClick={handleNext}>
-                            {currentIndex < questions.length - 1 ? "Next" : "Submit Quiz"}
+                        <button
+                            className="btn btn-primary"
+                            onClick={handleNext}
+                        >
+                            {submitted
+                                ? "Completed"
+                                : currentIndex < questions.length - 1
+                                    ? "Next"
+                                    : "Submit Quiz"}
                         </button>
                     </div>
-                    <div className="d-flex justify-content-center mt-3">
-                        <button className="btn btn-outline-primary" onClick={handleEditQuiz}>
-                            Edit Quiz
-                        </button>
-                    </div>
+
+                    {submitted && currentUser.role === "STUDENT" && (
+                        <div className="mt-4">
+                            <h4>
+                                You scored {earned} /{" "}
+                                {questions.reduce((sum: number, q: any) => sum + q.points, 0)}
+                            </h4>
+                        </div>
+                    )}
+
+                    {currentUser.role === "FACULTY" && (
+                        <div className="d-flex justify-content-center mt-3">
+                            <button
+                                className="btn btn-outline-primary"
+                                onClick={handleEditQuiz}
+                            >
+                                Edit Quiz
+                            </button>
+                        </div>
+                    )}
                 </div>
             )}
         </div>
