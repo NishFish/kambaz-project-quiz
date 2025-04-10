@@ -10,7 +10,7 @@
         "shuffleAnswers": "false",
         "timeLimit": "20 Minutes",
         "multipleAttempts": "false",
-        "howManyAttempts": 1,
+        "howManyAttempts": 0,
         "showCorrectAnswers": "false",
         "accessCode": "",
         "oneQuestionAtATime": "false",

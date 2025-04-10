@@ -52,27 +52,25 @@ export default function QuizDetails() {
 
   return (
     <div className="quiz-details-container">
-      {/* Centered Buttons at the top */}
-      <div className="buttons-container">
-        <button className="btn btn-light me-2" onClick={handleEditQuiz}>
-          <BsFillGearFill className="me-2" />
-          Edit Quiz
-        </button>
-        <button className="btn btn-primary" onClick={handlePreviewQuiz}>
-          Preview
-        </button>
-      </div>
+      {currentUser.role === "FACULTY" && (
+        <div className="buttons-container">
+          <button className="btn btn-light me-2" onClick={handleEditQuiz}>
+            <BsFillGearFill className="me-2" />
+            Edit Quiz
+          </button>
+          <button className="btn btn-primary" onClick={handlePreviewQuiz}>
+            Preview
+          </button>
+        </div>
+      )}
 
-      {/* Horizontal line separator */}
       <hr className="my-4" />
 
       <div className="quiz-details-content">
-        {/* Quiz name on the left */}
         <div className="quiz-name mb-4">
           <h3 className="quiz-details-header">{quizDetails.title}</h3>
         </div>
 
-        {/* Centered quiz details */}
         <div className="quiz-details-row">
           <b>Points:</b> {quizDetails.points}
         </div>
