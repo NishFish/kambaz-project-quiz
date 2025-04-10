@@ -49,8 +49,19 @@ const quizzesSlice = createSlice({
                 q._id === quizId ? { ...q, editing: true } : q
             );
         },
+        togglePublish: (state, { payload: quizId }) => {
+            state.quizzes = state.quizzes.map((q) =>
+                q._id === quizId
+                    ? {
+                        ...q,
+                        published: q.published === "true" ? "false" : "true",
+                    }
+                    : q
+            );
+        },
+
     },
 });
 
-export const { addQuiz, deleteQuiz, updateQuiz, editQuiz } = quizzesSlice.actions;
+export const { addQuiz, deleteQuiz, updateQuiz, editQuiz, togglePublish } = quizzesSlice.actions;
 export default quizzesSlice.reducer;

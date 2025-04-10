@@ -7,7 +7,7 @@ import { GoTriangleUp } from "react-icons/go"; // For the dropdown triangle
 import ContextMenu from "./QuizContextMenu"; // Import the new ContextMenu component
 import { v4 as uuidv4 } from 'uuid';
 import "./styles.css"
-import { deleteQuiz } from "./reducer";
+import { deleteQuiz, togglePublish } from "./reducer";
 import { CiSearch } from "react-icons/ci";
 
 
@@ -35,7 +35,7 @@ export default function Quizzes() {
   };
 
   const handlePublishQuiz = (quizId: string) => {
-    console.log(`Publishing/unpublishing quiz: ${quizId}`);
+    dispatch(togglePublish(quizId));
   };
 
   const handleCopyQuiz = (quizId: string) => {
@@ -45,6 +45,7 @@ export default function Quizzes() {
   const toggleMenu = (quizId: string) => {
     setActiveMenu((prevState) => (prevState === quizId ? null : quizId));
   };
+
 
   // Function to calculate availability status
   const getAvailability = (quiz: any) => {
@@ -111,7 +112,7 @@ export default function Quizzes() {
                     <div className="wd-quiz-name">{quiz.title}</div> {/* Larger quiz name */}
                   </a>
 
-                  {/* Display Availabil   ity and other quiz details */}
+                  {/* Display Availability and other quiz details */}
                   <div className="wd-quiz-info">
                     <p className="mb-1 text-muted">
                       <b>Availability</b>: {getAvailability(quiz)} &nbsp; | &nbsp;
@@ -132,14 +133,14 @@ export default function Quizzes() {
 
                 {currentUser.role === "FACULTY" && (
                   <div className="d-flex align-items-center">
-                    {/* Checkmark moved to the left */}
-                    <FaCheckCircle
-                      className="me-2" // Add margin to the right for spacing
-                      style={{
-                        fontSize: "20px",
-                        color: quiz.published ? "#28a745" : "#6c757d", // Green if published, lighter if not
-                      }}
-                    />
+                    {String(quiz.published) === "true" ? (
+                      <span className="me-2" style={{ fontSize: "20px" }}>🚫</span>
+                    ) : (
+                      <FaCheckCircle
+                        className="me-2"
+                        style={{ fontSize: "20px", color: "#28a745" }}
+                      />
+                    )}
 
                     <button
                       className="btn btn-link"
@@ -152,7 +153,7 @@ export default function Quizzes() {
                       quizId={quiz._id}
                       cid={cid}
                       isActive={activeMenu === quiz._id}
-                      isPublished={quiz.published}
+                      isPublished={String(quiz.published) === "false"}
                       onDelete={handleDeleteQuiz}
                       togglePublish={handlePublishQuiz}
                       onCopy={handleCopyQuiz}

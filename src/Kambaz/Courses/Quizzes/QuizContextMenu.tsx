@@ -69,7 +69,7 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
               padding: "8px 12px",
               borderRadius: "4px",
             }}
-            onClick={() => togglePublish(quizId)}
+            onClick={() => { togglePublish(quizId); onClose() }}
           >
             <MdPublish className="me-2" />
             {isPublished ? "Unpublish" : "Publish"}
