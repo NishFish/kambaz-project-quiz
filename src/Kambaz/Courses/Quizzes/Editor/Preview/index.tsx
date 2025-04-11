@@ -75,7 +75,9 @@ export default function QuizPreview() {
                     : [score];
 
                 dispatch(updateScore({
-                    quizId: qid, // Pass the calculated score
+                    quizId: qid,
+                    newScore: score,
+                    username: currentUser._id,
                 }));
             } else {
                 navigate(`/Kambaz/Courses/${cid}/Quizzes/`);

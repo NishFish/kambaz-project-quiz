@@ -59,20 +59,21 @@ const quizzesSlice = createSlice({
                     : q
             );
         },
-        updateScore: (state, { payload: { quizId, newScore } }) => {
-            state.quizzes = state.quizzes.map((q) => {
-                if (q._id === quizId) {
-                    const updatedScoreArray = Array.isArray(q.score)
-                        ? [...q.score, newScore]
-                        : [newScore];
+        updateScore: (state, { payload: { quizId, newScore, username } }) => {
+            state.quizzes = state.quizzes.map((quiz: any) => {
+                if (quiz._id === quizId) {
+                    const updatedScores = {
+                        ...quiz.score,
+                        [username]: quiz.score[username] ? [...quiz.score[username], newScore] : [newScore]
+                    };
 
                     return {
-                        ...q,
-                        score: updatedScoreArray,
-                        howManyAttempts: (q.howManyAttempts || 0) + 1,
+                        ...quiz,
+                        score: updatedScores,
+                        howManyAttempts: (quiz.howManyAttempts || 0) + 1,
                     };
                 }
-                return q;
+                return quiz;
             });
         },
 

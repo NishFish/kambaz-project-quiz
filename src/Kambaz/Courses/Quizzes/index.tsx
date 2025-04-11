@@ -46,7 +46,7 @@ export default function Quizzes() {
     setActiveMenu((prevState) => (prevState === quizId ? null : quizId));
   };
 
-
+  console.log(quizzes)
   const getAvailability = (quiz: any) => {
     const currentDate = new Date();
 
@@ -61,7 +61,6 @@ export default function Quizzes() {
       return `Not available until ${availableDate.toLocaleDateString()}`;
     }
   };
-  console.log(quizzes)
   return (
     <div id="wd-quizzes" className="quizzes-container">
       <div className="d-flex justify-content-between align-items-center">
@@ -120,11 +119,24 @@ export default function Quizzes() {
                 </div>
 
                 <div className="d-flex flex-column align-items-end">
-                  {currentUser.role === "STUDENT" && quiz.score && (
-                    <p className="mb-1 text-muted">
-                      <b>Score</b>: {quiz.score.length > 0 ? quiz.score[quiz.score.length - 1] : "Not attempted yet"}
-                    </p>
-                  )}
+                  {
+                    currentUser.role === "STUDENT" && quiz.score && quiz.score[currentUser._id] !== undefined ? (
+                      <p className="mb-1 text-muted">
+                        <b>Score</b>: {
+                          Array.isArray(quiz.score[currentUser._id]) && quiz.score[currentUser._id].length > 0
+                            ? quiz.score[currentUser._id][quiz.score[currentUser._id].length - 1]
+                            : "Not attempted yet"
+                        }
+                      </p>
+                    ) : (
+                      <p className="mb-1 text-muted">
+                        <b>Score</b>: {"Not attempted yet"}
+                      </p>
+                    )
+                  }
+
+
+
                 </div>
 
                 {currentUser.role === "FACULTY" && (
