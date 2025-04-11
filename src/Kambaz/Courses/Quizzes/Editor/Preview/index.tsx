@@ -203,7 +203,7 @@ export default function QuizPreview() {
                         </button>
                     </div>
 
-                    {submitted && currentUser.role === "STUDENT" && (
+                    {submitted && (
                         <div className="mt-4">
                             <h4>
                                 You scored {earned} /{" "}

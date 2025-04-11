@@ -2,15 +2,15 @@ import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { BsGripVertical } from "react-icons/bs";
-import { FaPlus, FaCheckCircle } from "react-icons/fa"; // Import check circle icon
-import { GoTriangleUp } from "react-icons/go"; // For the dropdown triangle
-import ContextMenu from "./QuizContextMenu"; // Import the new ContextMenu component
+import { FaPlus, FaCheckCircle } from "react-icons/fa";
+import { GoTriangleUp } from "react-icons/go";
+import ContextMenu from "./QuizContextMenu";
 import { v4 as uuidv4 } from 'uuid';
 import "./styles.css"
 import { deleteQuiz, togglePublish } from "./reducer";
 import { CiSearch } from "react-icons/ci";
 
-
+//need to add feature where quizes are locked when unavailable (either not published or not within dates)
 export default function Quizzes() {
   const { cid } = useParams();
   const { quizzes } = useSelector((state: any) => state.quizzesReducer);
@@ -118,9 +118,9 @@ export default function Quizzes() {
                   </div>
                 </div>
 
-                <div className="d-flex flex-column align-items-end">
-                  {
-                    currentUser.role === "STUDENT" && quiz.score && quiz.score[currentUser._id] !== undefined ? (
+                {currentUser.role === "STUDENT" && (
+                  <div className="d-flex flex-column align-items-end">
+                    {quiz.score && quiz.score[currentUser._id] !== undefined ? (
                       <p className="mb-1 text-muted">
                         <b>Score</b>: {
                           Array.isArray(quiz.score[currentUser._id]) && quiz.score[currentUser._id].length > 0
@@ -132,12 +132,10 @@ export default function Quizzes() {
                       <p className="mb-1 text-muted">
                         <b>Score</b>: {"Not attempted yet"}
                       </p>
-                    )
-                  }
+                    )}
+                  </div>
+                )}
 
-
-
-                </div>
 
                 {currentUser.role === "FACULTY" && (
                   <div className="d-flex align-items-center">
