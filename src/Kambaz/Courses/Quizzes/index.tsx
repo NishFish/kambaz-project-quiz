@@ -10,7 +10,8 @@ import "./styles.css"
 import { deleteQuiz, togglePublish } from "./reducer";
 import { CiSearch } from "react-icons/ci";
 
-//need to add feature where quizes are locked when unavailable (either not published or not within dates)
+//need to add feature where quizes are locked when unavailable (either not published or not within dates or number of attempts have run out)
+//increase/decreate number of questions when added/removed
 export default function Quizzes() {
   const { cid } = useParams();
   const { quizzes } = useSelector((state: any) => state.quizzesReducer);
