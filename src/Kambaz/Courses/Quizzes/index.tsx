@@ -46,7 +46,6 @@ export default function Quizzes() {
     setActiveMenu((prevState) => (prevState === quizId ? null : quizId));
   };
 
-  console.log(quizzes)
   const getAvailability = (quiz: any) => {
     const currentDate = new Date();
 

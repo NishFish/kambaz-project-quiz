@@ -1,9 +1,8 @@
-import { useState, useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useParams, useNavigate } from "react-router";
 import NewQuestionEditor from "./QuizQuestionsEditor";
-import { useNavigate } from "react-router-dom";
-import { updateQuestionSet } from "./reducer";
+import { deleteQuestion, updateQuestionSet } from "./reducer";
 
 export default function QuizQuestions() {
   const dispatch = useDispatch();
@@ -15,13 +14,8 @@ export default function QuizQuestions() {
   );
   const questions = questionSet ? questionSet.questions : [];
 
-  const [draftQuestions, setDraftQuestions] = useState(questions);
   const [showModal, setShowModal] = useState(false);
   const [editingQuestion, setEditingQuestion] = useState(null);
-
-  useEffect(() => {
-    setDraftQuestions(questions);
-  }, [questions]);
 
   const handleEdit = (question: any) => {
     setEditingQuestion(question);
@@ -30,33 +24,22 @@ export default function QuizQuestions() {
 
   const handleDelete = (questionId: any) => {
     if (window.confirm("Are you sure you want to delete this question?")) {
-      setDraftQuestions((prevDrafts: any) =>
-        prevDrafts.filter((q: any) => q.id !== questionId)
-      );
+      dispatch(deleteQuestion({ quizId: qid, questionId }));
     }
   };
 
   const handleSaveDraftQuestion = (question: any) => {
-    setDraftQuestions((prevDrafts: any) => {
-      const exists = prevDrafts.find((q: any) => q.id === question.id);
-      if (exists) {
-        return prevDrafts.map((q: any) => (q.id === question.id ? question : q));
-      } else {
-        return [...prevDrafts, question];
-      }
-    });
+    dispatch(updateQuestionSet({ quiz: qid, questions: [...questions, question] }));
   };
 
   const handleCommitChanges = () => {
-    dispatch(updateQuestionSet({ quiz: qid, questions: draftQuestions }));
+    dispatch(updateQuestionSet({ quiz: qid, questions }));
     navigate(-1);
   };
 
   const handleCancelChanges = () => {
-    setDraftQuestions(questions);
     navigate(-1);
   };
-
 
   return (
     <div className="container mt-4 p-4 bg-light border rounded">
@@ -83,8 +66,8 @@ export default function QuizQuestions() {
       )}
 
       <ul className="list-group">
-        {draftQuestions.length > 0 ? (
-          draftQuestions.map((q: any) => (
+        {questions.length > 0 ? (
+          questions.map((q: any) => (
             <li
               key={q.id}
               className="list-group-item d-flex justify-content-between align-items-center"

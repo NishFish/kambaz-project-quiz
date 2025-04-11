@@ -6,7 +6,7 @@ import { questions } from "../../../../Database";
 const initialState = {
     questionSets: questions
 };
-
+//increase quiz.numberofquestions by 1 each time a question is added
 const questionsSlice = createSlice({
     name: "questions",
     initialState,

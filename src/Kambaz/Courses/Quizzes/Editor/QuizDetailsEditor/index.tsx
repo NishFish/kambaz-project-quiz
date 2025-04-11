@@ -4,17 +4,14 @@ import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import { addQuiz, updateQuiz } from "../../reducer"; // Ensure updateQuiz is exported
+import { addQuiz, updateQuiz } from "../../reducer";
 import { v4 as uuidv4 } from "uuid";
-// If you have conversion functions similar to assignments, import them.
-// For example: import { convertToISO, convertToHumanReadable } from "./convert_date";
 
 export default function QuizEditor() {
-  const { cid, qid } = useParams(); // qid exists if editing
+  const { cid, qid } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // Get existing quiz (if any) from Redux
   const quizzes = useSelector((state: any) => state.quizzesReducer.quizzes);
   const existingQuiz = qid ? quizzes.find((q: any) => q._id === qid) : null;
 
@@ -26,7 +23,7 @@ export default function QuizEditor() {
     assignmentGroup: "Quizzes",
     points: 0,
     shuffleAnswers: true,
-    timeLimit: "20 Minutes", // stored as string for display
+    timeLimit: "20 Minutes",
     multipleAttempts: false,
     howManyAttempts: 1,
     showCorrectAnswers: false,
@@ -39,7 +36,7 @@ export default function QuizEditor() {
     availableUntilDate: "",
     course: cid,
     published: false,
-    score: [],
+    score: {},
   });
 
 
