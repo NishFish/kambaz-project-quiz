@@ -23,6 +23,8 @@ const exampleQuizDetails = {
   dueDate: "2025-03-30",
   availableDate: "2025-03-15",
   availableUntilDate: "2025-03-28",
+  score: {},
+  userAttempts: {}
 };
 
 export default function QuizDetails() {

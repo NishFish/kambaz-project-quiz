@@ -32,7 +32,8 @@ const quizzesSlice = createSlice({
                 availableUntilDate: quiz.availableUntilDate || "",
                 course: quiz.course,
                 published: quiz.published || false,
-                score: quiz.score || []
+                score: quiz.score || {},
+                userAttempts: quiz.userAttempts || {}
             };
             state.quizzes = [...state.quizzes, newQuiz];
         },
@@ -66,11 +67,14 @@ const quizzesSlice = createSlice({
                         ...quiz.score,
                         [username]: quiz.score[username] ? [...quiz.score[username], newScore] : [newScore]
                     };
-
+                    const updatedAttempts = {
+                        ...quiz.userAttempts,
+                        [username]: (quiz.userAttempts[username] || 0) + 1
+                    };
                     return {
                         ...quiz,
                         score: updatedScores,
-                        howManyAttempts: (quiz.howManyAttempts || 0) + 1,
+                        userAttempts: updatedAttempts,
                     };
                 }
                 return quiz;

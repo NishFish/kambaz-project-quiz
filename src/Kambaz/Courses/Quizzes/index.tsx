@@ -11,10 +11,10 @@ import { deleteQuiz, togglePublish } from "./reducer";
 import { CiSearch } from "react-icons/ci";
 
 //need to add feature where quizes are locked when unavailable (either not published or not within dates or number of attempts have run out)
+//need to store each user's number of attempts
 //increase/decreate number of questions when added/removed
 //user should be able to return to quiz page to see their answers (quiz locked, but can see old answers)
 //quiz must be highlighted as green/checkmarked and red/X if incorrect
-//students should be able to see published/unpublished sign
 
 export default function Quizzes() {
   const { cid } = useParams();
@@ -65,6 +65,8 @@ export default function Quizzes() {
       return `Not available until ${availableDate.toLocaleDateString()}`;
     }
   };
+
+  console.log(quizzes)
   return (
     <div id="wd-quizzes" className="quizzes-container">
       <div className="d-flex justify-content-between align-items-center">
