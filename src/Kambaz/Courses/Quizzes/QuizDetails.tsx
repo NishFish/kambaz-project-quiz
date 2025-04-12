@@ -41,13 +41,13 @@ export default function QuizDetails() {
   };
 
   const handlePreviewQuiz = () => {
-    console.log(`Previewing quiz: ${qid}`);
+    navigate(`/Kambaz/Courses/${cid}/Quizzes/${qid}/viewer`);
   };
 
   return (
     <div className="quiz-details-container">
       {/* Centered Buttons at the top */}
-      <div className="buttons-container">
+      {currentUser.role === "FACULTY" && (<div className="buttons-container">
         <button className="btn btn-light me-2" onClick={handleEditQuiz}>
           <BsFillGearFill className="me-2" />
           Edit Quiz
@@ -55,7 +55,7 @@ export default function QuizDetails() {
         <button className="btn btn-primary" onClick={handlePreviewQuiz}>
           Preview
         </button>
-      </div>
+      </div>)}
 
       {/* Horizontal line separator */}
       <hr className="my-4" />

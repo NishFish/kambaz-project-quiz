@@ -11,11 +11,10 @@ export default function QuizQuestions() {
         New Question
       </button>
 
-      {/* Modal for editing question */}
       {showModal && <NewQuestionEditor onClose={() => setShowModal(false)} />}
 
       <ul className="list-group">
-        {/* List of questions will be displayed here */}
+        {/* List of questions will be displayed here we need to make a route so if this gets clciked we edit it?*/}
       </ul>
 
       <div className="mt-4 d-flex justify-content-between">
