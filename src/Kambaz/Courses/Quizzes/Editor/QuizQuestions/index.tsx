@@ -18,6 +18,7 @@ export default function QuizQuestions() {
   const [draftQuestions, setDraftQuestions] = useState(questions);
   const [showModal, setShowModal] = useState(false);
   const [editingQuestion, setEditingQuestion] = useState(null);
+
   useEffect(() => {
     setDraftQuestions(questions);
   }, [questions]);
@@ -56,7 +57,7 @@ export default function QuizQuestions() {
     navigate(-1);
   };
 
-
+  console.log(questionSet)
   return (
     <div className="container mt-4 p-4 bg-light border rounded">
       <h2 className="mb-4">Quiz Questions Editor</h2>

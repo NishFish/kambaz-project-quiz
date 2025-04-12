@@ -54,9 +54,20 @@ const questionsSlice = createSlice({
                 state.questionSets.push({ _id: uuidv4(), quiz, questions });
             }
         },
+        recordAnswer: (state, { payload: { quiz, questionId, userId, answer } }) => {
+            const questionSet = state.questionSets.find((qs) => qs.quiz === quiz);
+            if (!questionSet) return;
+            const question = questionSet.questions.find((q) => q.id === questionId);
+            if (!question) return;
+            if (!question.latestAnswers) {
+                question.latestAnswers = {};
+            }
+            // @ts-ignore
+            question.latestAnswers[userId] = answer;
+        },
     },
 }
 );
 
-export const { addQuestionSet, addQuestion, updateQuestion, deleteQuestion, updateQuestionSet } = questionsSlice.actions;
+export const { addQuestionSet, addQuestion, updateQuestion, deleteQuestion, updateQuestionSet, recordAnswer } = questionsSlice.actions;
 export default questionsSlice.reducer;
