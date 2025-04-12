@@ -14,7 +14,6 @@ import { CiSearch } from "react-icons/ci";
 //increase/decreate number of questions when added/removed
 //user should be able to return to quiz page to see their answers (quiz locked, but can see old answers)
 //quiz must be highlighted as green/checkmarked and red/X if incorrect
-//quiz should be unpubilshed when first made
 //students should be able to see published/unpublished sign
 
 export default function Quizzes() {
@@ -123,6 +122,38 @@ export default function Quizzes() {
                   </div>
                 </div>
 
+                <div className="d-flex align-items-center">
+                  {String(quiz.published) === "false" ? (
+                    <span className="me-2" style={{ fontSize: "20px" }}>🚫</span>
+                  ) : (
+                    <FaCheckCircle
+                      className="me-2"
+                      style={{ fontSize: "20px", color: "#28a745" }}
+                    />
+                  )}
+                  {currentUser.role === "FACULTY" && (
+                    <div>
+                      <button
+                        className="btn btn-link"
+                        onClick={() => toggleMenu(quiz._id)}
+                      >
+                        <BsGripVertical className="fs-3" />
+                      </button>
+
+                      <ContextMenu
+                        quizId={quiz._id}
+                        cid={cid}
+                        isActive={activeMenu === quiz._id}
+                        isPublished={String(quiz.published) === "false"}
+                        onDelete={handleDeleteQuiz}
+                        togglePublish={handlePublishQuiz}
+                        onCopy={handleCopyQuiz}
+                        onClose={() => setActiveMenu(null)} // Close the menu
+                      />
+                    </div>
+                  )}
+                </div>
+
                 {currentUser.role === "STUDENT" && (
                   <div className="d-flex flex-column align-items-end">
                     {quiz.score && quiz.score[currentUser._id] !== undefined ? (
@@ -138,38 +169,6 @@ export default function Quizzes() {
                         <b>Score</b>: {"Not attempted yet"}
                       </p>
                     )}
-                  </div>
-                )}
-
-
-                {currentUser.role === "FACULTY" && (
-                  <div className="d-flex align-items-center">
-                    {String(quiz.published) === "false" ? (
-                      <span className="me-2" style={{ fontSize: "20px" }}>🚫</span>
-                    ) : (
-                      <FaCheckCircle
-                        className="me-2"
-                        style={{ fontSize: "20px", color: "#28a745" }}
-                      />
-                    )}
-
-                    <button
-                      className="btn btn-link"
-                      onClick={() => toggleMenu(quiz._id)}
-                    >
-                      <BsGripVertical className="fs-3" />
-                    </button>
-
-                    <ContextMenu
-                      quizId={quiz._id}
-                      cid={cid}
-                      isActive={activeMenu === quiz._id}
-                      isPublished={String(quiz.published) === "false"}
-                      onDelete={handleDeleteQuiz}
-                      togglePublish={handlePublishQuiz}
-                      onCopy={handleCopyQuiz}
-                      onClose={() => setActiveMenu(null)} // Close the menu
-                    />
                   </div>
                 )}
               </div>
