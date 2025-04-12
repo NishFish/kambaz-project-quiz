@@ -17,7 +17,7 @@ export default function QuizEditor() {
 
   // Default quiz state
   const [quiz, setQuiz] = useState({
-    title: "",
+    title: "Default",
     description: "",
     quizType: "Graded Quiz",
     assignmentGroup: "Quizzes",

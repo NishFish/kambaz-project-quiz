@@ -13,7 +13,7 @@ const quizzesSlice = createSlice({
         addQuiz: (state, { payload: quiz }) => {
             const newQuiz = {
                 _id: uuidv4(),
-                title: quiz.title || "",
+                title: quiz.title || "Default",
                 quizType: quiz.quizType || "Graded Quiz",
                 assignmentGroup: quiz.assignmentGroup || "Quizzes",
                 points: quiz.points || 0,
