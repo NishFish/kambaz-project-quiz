@@ -1,6 +1,7 @@
 import { useState } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
+import { useNavigate, useParams } from "react-router-dom";
 
 export default function QuizDetails() {
   const [quizTitle, setQuizTitle] = useState("");
@@ -19,6 +20,12 @@ export default function QuizDetails() {
   const [dueDate, setDueDate] = useState("");
   const [availableFrom, setAvailableFrom] = useState("");
   const [availableUntil, setAvailableUntil] = useState("");
+  const navigate = useNavigate();
+  const { cid, qid } = useParams();
+  const handleCancel = () => {
+    
+    navigate(`/Kambaz/Courses/${cid}/Quizzes/${qid}`);
+  };
 
   return (
     <div className="container mt-4 p-4 bg-light border rounded">
@@ -95,7 +102,7 @@ export default function QuizDetails() {
       <input type="date" className="form-control" value={availableUntil} onChange={(e) => setAvailableUntil(e.target.value)} />
       
       <div className="mt-4 d-flex justify-content-between">
-        <button className="btn btn-outline-secondary">Cancel</button>
+        <button className="btn btn-outline-secondary" onClick={handleCancel}>Cancel</button>
         <button className="btn btn-primary">Save</button>
       </div>
     </div>
