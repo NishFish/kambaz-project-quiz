@@ -101,7 +101,6 @@ export default function QuizPreview() {
     const handleEditQuiz = () => {
         navigate(`/Kambaz/Courses/${cid}/Quizzes/${qid}/editor`);
     };
-    console.log(questionSet)
 
     const renderQuestion = () => {
         if (!currentQuestion) return <div>No question found.</div>;

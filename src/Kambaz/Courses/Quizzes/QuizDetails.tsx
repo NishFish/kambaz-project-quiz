@@ -19,6 +19,7 @@ const exampleQuizDetails = {
   oneQuestionAtATime: true,
   webcamRequired: false,
   lockQuestionsAfterAnswering: false,
+  published: false,
   dueDate: "2025-03-30",
   availableDate: "2025-03-15",
   availableUntilDate: "2025-03-28",

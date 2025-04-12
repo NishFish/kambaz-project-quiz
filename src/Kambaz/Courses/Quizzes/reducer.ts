@@ -31,7 +31,7 @@ const quizzesSlice = createSlice({
                 availableDate: quiz.availableDate || "",
                 availableUntilDate: quiz.availableUntilDate || "",
                 course: quiz.course,
-                published: quiz.published,
+                published: quiz.published || false,
                 score: quiz.score || []
             };
             state.quizzes = [...state.quizzes, newQuiz];

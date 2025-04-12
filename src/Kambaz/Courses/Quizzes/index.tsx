@@ -12,9 +12,10 @@ import { CiSearch } from "react-icons/ci";
 
 //need to add feature where quizes are locked when unavailable (either not published or not within dates or number of attempts have run out)
 //increase/decreate number of questions when added/removed
-//need to modify quiz to store latest user answers
 //user should be able to return to quiz page to see their answers (quiz locked, but can see old answers)
 //quiz must be highlighted as green/checkmarked and red/X if incorrect
+//quiz should be unpubilshed when first made
+//students should be able to see published/unpublished sign
 
 export default function Quizzes() {
   const { cid } = useParams();
@@ -143,7 +144,7 @@ export default function Quizzes() {
 
                 {currentUser.role === "FACULTY" && (
                   <div className="d-flex align-items-center">
-                    {String(quiz.published) === "true" ? (
+                    {String(quiz.published) === "false" ? (
                       <span className="me-2" style={{ fontSize: "20px" }}>🚫</span>
                     ) : (
                       <FaCheckCircle

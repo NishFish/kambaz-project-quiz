@@ -57,7 +57,6 @@ export default function QuizQuestions() {
     navigate(-1);
   };
 
-  console.log(questionSet)
   return (
     <div className="container mt-4 p-4 bg-light border rounded">
       <h2 className="mb-4">Quiz Questions Editor</h2>

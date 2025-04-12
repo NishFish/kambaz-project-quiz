@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { MdEdit, MdDelete, MdPublish, MdContentCopy } from "react-icons/md";
+import { MdEdit, MdDelete, MdPublish } from "react-icons/md";
 import { FaTimes } from "react-icons/fa";
 
 type ContextMenuProps = {
@@ -72,13 +72,13 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
             onClick={() => { togglePublish(quizId); onClose() }}
           >
             <MdPublish className="me-2" />
-            {isPublished ? "Unpublish" : "Publish"}
+            {isPublished ? "Publish" : "Unublish"}
           </button>
           <button
             className="btn btn-link d-flex align-items-center"
             style={{
               fontSize: "16px",
-              color: "#868e96",
+              color: "black",
               padding: "8px 12px",
               borderRadius: "4px",
             }}
