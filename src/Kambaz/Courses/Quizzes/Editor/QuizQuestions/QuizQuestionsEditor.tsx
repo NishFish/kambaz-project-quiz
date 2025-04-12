@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import MultipleChoiceEditor from "./MultipleChoiceEditor";
 import TrueFalseEditor from "./TrueFalseEditor";
 import FillInTheBlankEditor from "./FillInTheBlankEditor";
+import { v4 as uuidv4 } from "uuid";
 
 interface NewQuestionEditorProps {
   onClose: () => void;
@@ -48,16 +49,16 @@ const NewQuestionEditor = ({
 
     const completeQuestion = {
       ...questionData,
-      id: initialQuestion?.id || questionData.id || Date.now(),
+      id: initialQuestion?.id || questionData.id || uuidv4(),
       name: questionName,
       points,
       type: questionType,
+      latestAnswers: {}
     };
 
     onSaveDraft(completeQuestion);
     onClose();
   };
-
   return (
     <div
       className="modal fade show"

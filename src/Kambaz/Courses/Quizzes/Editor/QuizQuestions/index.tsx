@@ -18,7 +18,6 @@ export default function QuizQuestions() {
   const [draftQuestions, setDraftQuestions] = useState(questions);
   const [showModal, setShowModal] = useState(false);
   const [editingQuestion, setEditingQuestion] = useState(null);
-
   useEffect(() => {
     setDraftQuestions(questions);
   }, [questions]);

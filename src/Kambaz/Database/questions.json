@@ -26,7 +26,8 @@
                         "isCorrect": false
                     }
                 ],
-                "points": 10
+                "points": 10,
+                "latestAnswers": {}
             },
             {
                 "id": "questions-1-q2",
@@ -34,7 +35,8 @@
                 "name": "sky quiz",
                 "question": "The sky is blue.",
                 "isCorrect": true,
-                "points": 5
+                "points": 5,
+                "latestAnswers": {}
             },
             {
                 "id": "questions-1-q3",
@@ -45,7 +47,8 @@
                     "H2O",
                     "water"
                 ],
-                "points": 10
+                "points": 10,
+                "latestAnswers": {}
             }
         ]
     }
