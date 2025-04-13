@@ -35,6 +35,23 @@ export default function QuizPreviewAttempt() {
         }
     }, [hasPreviousAttempt, questions, currentUser._id]);
 
+    // Helper to check correctness
+    const isCorrect = (q: any): boolean => {
+        const ans = previousAnswers[q.id];
+        if (ans === undefined) return false;
+        if (q.type === "Multiple Choice") {
+            return !!q.choices.find((c: any) => c.text === ans && c.isCorrect);
+        }
+        if (q.type === "True/False") {
+            return (ans === "True") === q.isCorrect;
+        }
+        if (q.type === "Fill in the Blank") {
+            const txt = (ans || "").trim().toLowerCase();
+            return q.blanks.some((b: string) => b.toLowerCase() === txt);
+        }
+        return false;
+    };
+
     return (
         <div className="container mt-4">
             <div className="d-flex justify-content-between align-items-center mb-4">
@@ -49,7 +66,6 @@ export default function QuizPreviewAttempt() {
                 </button>
             </div>
 
-
             <div className="mb-3">
                 {hasPreviousAttempt ? (
                     <div className="alert alert-info">Previous Attempt Loaded.</div>
@@ -60,61 +76,80 @@ export default function QuizPreviewAttempt() {
 
             {hasPreviousAttempt && questions.length > 0 && (
                 <div>
-                    {questions.map((q: any, idx: number) => (
-                        <div key={q.id} className="card mb-3 p-4">
-                            <div className="mb-2">
-                                <strong>
-                                    Question {idx + 1} of {questions.length} ({q.points} pts)
-                                </strong>
+                    {questions.map((q: any, idx: number) => {
+                        const correct = isCorrect(q);
+                        return (
+                            <div key={q.id} className="card mb-3">
+                                <div
+                                    className={`card-header d-flex justify-content-between align-items-center ${correct ? "bg-success text-white" : "bg-danger text-white"
+                                        }`}
+                                >
+                                    <span>
+                                        Question {idx + 1} of {questions.length} ({q.points} pts)
+                                    </span>
+                                </div>
+                                <div className="card-body">
+                                    <div
+                                        className="mb-3"
+                                        dangerouslySetInnerHTML={{ __html: q.question }}
+                                    />
+
+                                    {q.type === "Multiple Choice" && (
+                                        <ul className="list-group">
+                                            {q.choices.map((c: any) => {
+                                                const selected = previousAnswers[q.id] === c.text;
+                                                const choiceCorrect = c.isCorrect;
+                                                const liClass = selected
+                                                    ? choiceCorrect
+                                                        ? "list-group-item list-group-item-success"
+                                                        : "list-group-item list-group-item-danger"
+                                                    : "list-group-item";
+                                                return (
+                                                    <li key={c.text} className={liClass}>
+                                                        {c.text}
+                                                    </li>
+                                                );
+                                            })}
+                                        </ul>
+                                    )}
+
+                                    {q.type === "True/False" && (
+                                        <ul className="list-group">
+                                            {["True", "False"].map((val) => {
+                                                const selected = previousAnswers[q.id] === val;
+                                                const correctVal = (val === "True") === q.isCorrect;
+                                                const liClass = selected
+                                                    ? correctVal
+                                                        ? "list-group-item list-group-item-success"
+                                                        : "list-group-item list-group-item-danger"
+                                                    : "list-group-item";
+                                                return (
+                                                    <li key={val} className={liClass}>
+                                                        {val}
+                                                    </li>
+                                                );
+                                            })}
+                                        </ul>
+                                    )}
+
+                                    {q.type === "Fill in the Blank" && (
+                                        <input
+                                            type="text"
+                                            className={`form-control ${previousAnswers[q.id] === undefined
+                                                ? ""
+                                                : correct
+                                                    ? "is-valid"
+                                                    : "is-invalid"
+                                                }`}
+                                            value={previousAnswers[q.id] || ""}
+                                            disabled
+                                            placeholder="No answer provided"
+                                        />
+                                    )}
+                                </div>
                             </div>
-                            <div
-                                className="mb-3"
-                                dangerouslySetInnerHTML={{ __html: q.question }}
-                            />
-
-                            {q.type === "Multiple Choice" && (
-                                <ul className="list-group">
-                                    {q.choices.map((c: any) => (
-                                        <li
-                                            key={c.text}
-                                            className={
-                                                "list-group-item" +
-                                                (previousAnswers[q.id] === c.text ? " active" : "")
-                                            }
-                                        >
-                                            {c.text}
-                                        </li>
-                                    ))}
-                                </ul>
-                            )}
-
-                            {q.type === "True/False" && (
-                                <ul className="list-group">
-                                    {["True", "False"].map((val) => (
-                                        <li
-                                            key={val}
-                                            className={
-                                                "list-group-item" +
-                                                (previousAnswers[q.id] === val ? " active" : "")
-                                            }
-                                        >
-                                            {val}
-                                        </li>
-                                    ))}
-                                </ul>
-                            )}
-
-                            {q.type === "Fill in the Blank" && (
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    value={previousAnswers[q.id] || ""}
-                                    disabled
-                                    placeholder="No answer provided"
-                                />
-                            )}
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
             )}
 
