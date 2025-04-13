@@ -126,17 +126,15 @@ export default function QuizDetails() {
             <button className="btn btn-lg btn-success" onClick={handleStartQuiz}>
               <FaPlay className="me-2" />
               Start Quiz
+            </button><br /><br />
+
+            <button className="btn btn-lg btn-danger" onClick={handleViewQuiz}>
+              <FaPlay className="me-2" />
+              View Last Attempt
             </button>
           </div>
         )}
-
-        <div className="start-quiz-button mt-4">
-          <button className="btn btn-lg btn-danger" onClick={handleViewQuiz}>
-            <FaPlay className="me-2" />
-            View Last Attempt
-          </button>
-        </div>
       </div>
-    </div>
+    </div >
   );
 }

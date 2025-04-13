@@ -12,8 +12,6 @@ import { CiSearch } from "react-icons/ci";
 
 //need to add feature where quizes are locked when unavailable (either not published or not within dates or number of attempts have run out)
 //increase/decreate number of questions when added/removed
-//user should be able to return to quiz page to see their answers (quiz locked, but can see old answers)
-//quiz must be highlighted as green/checkmarked and red/X if incorrect
 
 export default function Quizzes() {
   const { cid } = useParams();
