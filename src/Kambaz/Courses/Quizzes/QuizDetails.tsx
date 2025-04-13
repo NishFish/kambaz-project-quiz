@@ -122,12 +122,26 @@ export default function QuizDetails() {
         </div>
 
         {currentUser.role === "STUDENT" && (
-          <div className="start-quiz-button mt-4">
-            <button className="btn btn-lg btn-success" onClick={handleStartQuiz}>
-              <FaPlay className="me-2" />
-              Start Quiz
-            </button><br /><br />
+          <div className="mt-3">
+            <b>Remaining Attempts:</b>{" "}
+            {quizDetails.howManyAttempts - (quizDetails.userAttempts[currentUser._id] || 0)}
+          </div>
+        )}
 
+        {currentUser.role === "STUDENT" &&
+          quizDetails.multipleAttempts === "true" &&
+          (quizDetails.userAttempts[currentUser._id] || 0) < quizDetails.howManyAttempts && (
+            <div className="start-quiz-button mt-4">
+              <button className="btn btn-lg btn-success" onClick={handleStartQuiz}>
+                <FaPlay className="me-2" />
+                Start Quiz
+              </button>
+            </div>
+          )}
+
+
+        {currentUser.role === "STUDENT" && (
+          <div className="start-quiz-button mt-4">
             <button className="btn btn-lg btn-danger" onClick={handleViewQuiz}>
               <FaPlay className="me-2" />
               View Last Attempt
@@ -135,6 +149,6 @@ export default function QuizDetails() {
           </div>
         )}
       </div>
-    </div >
+    </div>
   );
 }
