@@ -1,4 +1,3 @@
-import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { FaPlay } from "react-icons/fa"; // For the start button for students
@@ -42,6 +41,10 @@ export default function QuizDetails() {
 
   const handleStartQuiz = () => {
     navigate(`/Kambaz/Courses/${cid}/Quizzes/${qid}/preview`);
+  };
+
+  const handleViewQuiz = () => {
+    navigate(`/Kambaz/Courses/${cid}/Quizzes/${qid}/previewAttempt`);
   };
 
   const handleEditQuiz = () => {
@@ -126,6 +129,13 @@ export default function QuizDetails() {
             </button>
           </div>
         )}
+
+        <div className="start-quiz-button mt-4">
+          <button className="btn btn-lg btn-danger" onClick={handleViewQuiz}>
+            <FaPlay className="me-2" />
+            View Last Attempt
+          </button>
+        </div>
       </div>
     </div>
   );
