@@ -13,6 +13,7 @@ export default function QuizQuestions() {
   const questionSet = useSelector((state: any) =>
     state.questionReducer.questionSets.find((qs: any) => qs.quiz === qid)
   );
+
   const questions = questionSet ? questionSet.questions : [];
 
   const [draftQuestions, setDraftQuestions] = useState(questions);

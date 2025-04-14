@@ -59,6 +59,7 @@ const NewQuestionEditor = ({
     onSaveDraft(completeQuestion);
     onClose();
   };
+
   return (
     <div
       className="modal fade show"
