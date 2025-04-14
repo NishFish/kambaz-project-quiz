@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { v4 as uuidv4 } from "uuid";
 import { quizes } from "../../Database";
+import { addQuestion, deleteQuestion, updateQuestionSet } from "./Editor/QuizQuestions/reducer";
 
 const initialState = {
     quizzes: quizes
@@ -81,6 +82,21 @@ const quizzesSlice = createSlice({
             });
         },
 
+    },
+    extraReducers: (builder) => {
+        builder
+            .addCase(addQuestion, (state, { payload: { quiz } }) => {
+                const q = state.quizzes.find((x) => x._id === quiz);
+                if (q) q.numberOfQuestions = (q.numberOfQuestions || 0) + 1;
+            })
+            .addCase(deleteQuestion, (state, { payload: { quiz } }) => {
+                const q = state.quizzes.find((x) => x._id === quiz);
+                if (q) q.numberOfQuestions = Math.max((q.numberOfQuestions || 1) - 1, 0);
+            })
+            .addCase(updateQuestionSet, (state, { payload: { quiz, questions } }) => {
+                const q = state.quizzes.find((x) => x._id === quiz);
+                if (q) q.numberOfQuestions = questions.length;
+            });
     },
 });
 
