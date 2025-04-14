@@ -53,7 +53,9 @@ export default function Quizzes() {
 
     const availableDate = new Date(quiz.availableDate);
     const availableUntilDate = new Date(quiz.availableUntilDate);
-
+    if (String(quiz.published) === "false") {
+      return "Closed";
+    }
     if (currentDate > availableUntilDate) {
       return "Closed";
     } else if (currentDate >= availableDate && currentDate <= availableUntilDate) {
@@ -63,7 +65,6 @@ export default function Quizzes() {
     }
   };
 
-  console.log(quizzes)
   return (
     <div id="wd-quizzes" className="quizzes-container">
       <div className="d-flex justify-content-between align-items-center">

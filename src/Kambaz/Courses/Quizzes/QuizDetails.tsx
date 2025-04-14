@@ -55,6 +55,23 @@ export default function QuizDetails() {
     navigate(`/Kambaz/Courses/${cid}/Quizzes/${qid}/preview`);
   };
 
+  const getAvailability = (quiz: any) => {
+    const currentDate = new Date();
+
+    const availableDate = new Date(quiz.availableDate);
+    const availableUntilDate = new Date(quiz.availableUntilDate);
+    if (String(quiz.published) === "false") {
+      return false;
+    }
+    if (currentDate > availableUntilDate) {
+      return false;
+    } else if (currentDate >= availableDate && currentDate <= availableUntilDate) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
   return (
     <div className="quiz-details-container">
       {currentUser.role === "FACULTY" && (
@@ -130,7 +147,9 @@ export default function QuizDetails() {
 
         {currentUser.role === "STUDENT" &&
           quizDetails.multipleAttempts === "true" &&
-          (quizDetails.userAttempts[currentUser._id] || 0) < quizDetails.howManyAttempts && (
+          (quizDetails.userAttempts[currentUser._id] || 0) < quizDetails.howManyAttempts &&
+          getAvailability(quizDetails) &&
+          String(quizDetails.published) === "true" && (
             <div className="start-quiz-button mt-4">
               <button className="btn btn-lg btn-success" onClick={handleStartQuiz}>
                 <FaPlay className="me-2" />

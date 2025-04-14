@@ -16,9 +16,9 @@
         "oneQuestionAtATime": "false",
         "webcamRequired": "false",
         "lockQuestionsAfterAnswering": "false",
-        "dueDate": "2025-04-16T14:31",
-        "availableDate": "2025-04-15T14:31",
-        "availableUntilDate": "2025-04-15T14:31",
+        "dueDate": "2025-06-16T14:31",
+        "availableDate": "2025-03-15T14:31",
+        "availableUntilDate": "2025-06-19T14:31",
         "published": "false",
         "score": {},
         "userAttempts": {}
