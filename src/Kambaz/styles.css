@@ -173,11 +173,3 @@ button.custom-dark-grey-btn.btn-lg:hover {
     margin: 0 auto;
 
 }
-
-#wd-search-quiz {
-    border: none;
-    outline: none;
-    width: 100%;
-    font-size: 25px;
-    color: #6c757d;
-}

@@ -1,8 +1,12 @@
 import { ListGroup } from "react-bootstrap";
-import { Link } from "react-router-dom";
-
+import { Link, useLocation } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 export default function AccountNavigation() {
+  const { currentUser } = useSelector((state: any) => state.accountReducer);
+  const { pathname } = useLocation();
+  const active = (path: string) => (pathname.includes(path) ? "active" : "");
+
   return (
     <ListGroup id="wd-courses-navigation" className="wd list-group fs-5 rounded-0">
       <ListGroup.Item className="p-0 border-0 active">
@@ -33,6 +37,10 @@ export default function AccountNavigation() {
         >
           Profile
         </Link>
+      </ListGroup.Item>
+      <ListGroup.Item className="p-0 border-0">
+        {currentUser && currentUser.role === "ADMIN" && (
+          <Link to={`/Kambaz/Account/Users`} className={`btn btn-link w-100 text-start text-danger list-group-item border-0 ${active("Users")}`}> Users </Link>)}
       </ListGroup.Item>
     </ListGroup>
   );
