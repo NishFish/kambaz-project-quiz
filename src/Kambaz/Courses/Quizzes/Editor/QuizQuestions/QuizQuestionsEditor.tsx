@@ -19,7 +19,7 @@ const NewQuestionEditor = ({
   const { qid } = useParams();
 
   const [questionType, setQuestionType] = useState(
-    initialQuestion ? initialQuestion.type : "Multiple Choice"
+    initialQuestion ? initialQuestion.type : "MULTIPLE_CHOICE"
   );
   const [questionName, setQuestionName] = useState(
     initialQuestion ? initialQuestion.name : ""
@@ -88,9 +88,9 @@ const NewQuestionEditor = ({
                     value={questionType}
                     onChange={handleQuestionTypeChange}
                   >
-                    <option>Multiple Choice</option>
-                    <option>True/False</option>
-                    <option>Fill in the Blank</option>
+                    <option>MULTIPLE_CHOICE</option>
+                    <option>TRUE_FALSE</option>
+                    <option>FILL_IN_THE_BLANK</option>
                   </select>
                 </div>
               </div>
@@ -108,13 +108,13 @@ const NewQuestionEditor = ({
 
           <hr />
 
-          {questionType === "Multiple Choice" && (
+          {questionType === "MULTIPLE_CHOICE" && (
             <MultipleChoiceEditor onSave={setQuestionData} initialData={questionData} />
           )}
-          {questionType === "True/False" && (
+          {questionType === "TRUE_FALSE" && (
             <TrueFalseEditor onSave={setQuestionData} initialData={questionData} />
           )}
-          {questionType === "Fill in the Blank" && (
+          {questionType === "FILL_IN_THE_BLANK" && (
             <FillInTheBlankEditor onSave={setQuestionData} initialData={questionData} />
           )}
 

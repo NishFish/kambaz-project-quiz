@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { updateScore } from "../../reducer";
-import { recordAnswer } from "../QuizQuestions/reducer"
+// import { recordAnswer } from "../QuizQuestions/reducer"
 
 export default function QuizPreview() {
     const { cid, qid } = useParams();
@@ -81,14 +81,14 @@ export default function QuizPreview() {
                     username: currentUser._id,
                 }));
 
-                Object.entries(answers).forEach(([questionId, answer]) => {
-                    dispatch(recordAnswer({
-                        quiz: qid,
-                        questionId,
-                        userId: currentUser._id,
-                        answer
-                    }));
-                });
+                // Object.entries(answers).forEach(([questionId, answer]) => {
+                //     dispatch(recordAnswer({
+                //         quiz: qid,
+                //         questionId,
+                //         userId: currentUser._id,
+                //         answer
+                //     }));
+                // });
 
             } else {
                 navigate(`/Kambaz/Courses/${cid}/Quizzes/`);

@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { v4 as uuidv4 } from "uuid";
 import { quizes } from "../../Database";
-import { addQuestion, deleteQuestion, updateQuestionSet } from "./Editor/QuizQuestions/reducer";
+import { addQuestion, deleteQuestion} from "./Editor/QuizQuestions/reducer";
 
 const initialState = {
     quizzes: quizes
@@ -11,6 +11,9 @@ const quizzesSlice = createSlice({
     name: "quizzes",
     initialState,
     reducers: {
+        setQuizzes: (state, action) => {
+        state.quizzes = action.payload;
+      },
         addQuiz: (state, { payload: quiz }) => {
             const newQuiz = {
                 _id: uuidv4(),
@@ -93,12 +96,9 @@ const quizzesSlice = createSlice({
                 const q = state.quizzes.find((x) => x._id === quiz);
                 if (q) q.numberOfQuestions = Math.max((q.numberOfQuestions || 1) - 1, 0);
             })
-            .addCase(updateQuestionSet, (state, { payload: { quiz, questions } }) => {
-                const q = state.quizzes.find((x) => x._id === quiz);
-                if (q) q.numberOfQuestions = questions.length;
-            });
+            
     },
 });
 
-export const { addQuiz, deleteQuiz, updateQuiz, editQuiz, togglePublish, updateScore } = quizzesSlice.actions;
+export const { addQuiz, deleteQuiz, updateQuiz, editQuiz, togglePublish, updateScore, setQuizzes } = quizzesSlice.actions;
 export default quizzesSlice.reducer;

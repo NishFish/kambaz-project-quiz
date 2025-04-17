@@ -18,10 +18,10 @@ const exampleQuizDetails = {
   oneQuestionAtATime: true,
   webcamRequired: false,
   lockQuestionsAfterAnswering: false,
-  published: false,
+  published: true,
   dueDate: "2025-03-30",
   availableDate: "2025-03-15",
-  availableUntilDate: "2025-03-28",
+  availableUntilDate: "2026-03-28",
   score: {},
   userAttempts: {}
 };
@@ -148,8 +148,7 @@ export default function QuizDetails() {
         {currentUser.role === "STUDENT" &&
           quizDetails.multipleAttempts === "true" &&
           (quizDetails.userAttempts[currentUser._id] || 0) < quizDetails.howManyAttempts &&
-          getAvailability(quizDetails) &&
-          String(quizDetails.published) === "true" && (
+          getAvailability(quizDetails)  && (
             <div className="start-quiz-button mt-4">
               <button className="btn btn-lg btn-success" onClick={handleStartQuiz}>
                 <FaPlay className="me-2" />

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { BsGripVertical } from "react-icons/bs";
@@ -7,9 +7,9 @@ import { GoTriangleUp } from "react-icons/go";
 import ContextMenu from "./QuizContextMenu";
 import { v4 as uuidv4 } from 'uuid';
 import "./styles.css"
-import { deleteQuiz, togglePublish } from "./reducer";
+import { deleteQuiz, setQuizzes, togglePublish } from "./reducer";
 import { CiSearch } from "react-icons/ci";
-
+import {findAllQuizzesFromCourse, togglePublishQuiz, deleteQuizz} from "./client.ts";
 //increase/decreate number of questions when added/removed
 
 export default function Quizzes() {
@@ -31,11 +31,13 @@ export default function Quizzes() {
     navigate(`/Kambaz/Courses/${cid}/Quizzes/${newQuizId}/editor`);
   };
 
-  const handleDeleteQuiz = (quizId: string) => {
+  const handleDeleteQuiz = async (quizId: string) => {
+    await deleteQuizz(quizId);
     dispatch(deleteQuiz(quizId))
   };
 
-  const handlePublishQuiz = (quizId: string) => {
+  const handlePublishQuiz = async (quizId: string) => {
+    await togglePublishQuiz(quizId);
     dispatch(togglePublish(quizId));
   };
 
@@ -46,6 +48,15 @@ export default function Quizzes() {
   const toggleMenu = (quizId: string) => {
     setActiveMenu((prevState) => (prevState === quizId ? null : quizId));
   };
+
+  const fetchQuizzesForCourse = async () => {
+    const quizzes = await findAllQuizzesFromCourse(cid!);
+    dispatch(setQuizzes(quizzes));
+  };
+
+  useEffect(() => {
+    fetchQuizzesForCourse();
+  }, [cid]);
 
   const getAvailability = (quiz: any) => {
     const currentDate = new Date();
@@ -97,7 +108,7 @@ export default function Quizzes() {
 
       <ul id="wd-quiz-list" className="list-group rounded-0">
         {quizzes
-          .filter((quiz: any) => quiz.course === cid)
+          
           .filter((quiz: any) =>
             quiz.title.toLowerCase().includes(searchTerm.toLowerCase())
           )

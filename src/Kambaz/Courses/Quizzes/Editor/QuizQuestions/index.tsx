@@ -3,53 +3,71 @@ import { useSelector, useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
 import NewQuestionEditor from "./QuizQuestionsEditor";
 import { useNavigate } from "react-router-dom";
-import { updateQuestionSet } from "./reducer";
+import {findQuestionsByQuizId, createQuestion, updateQuestion, deleteQuestion} from "../../client.ts"
+import { setQuestions } from "./reducer.ts";
+import { v4 as uuidv4 } from "uuid";
 
 export default function QuizQuestions() {
   const dispatch = useDispatch();
   const { qid } = useParams();
   const navigate = useNavigate();
 
-  const questionSet = useSelector((state: any) =>
-    state.questionReducer.questionSets.find((qs: any) => qs.quiz === qid)
-  );
+  const questionSet = useSelector((state: any) => state.questionReducer.questionSets);
 
-  const questions = questionSet ? questionSet.questions : [];
+  const questions = questionSet ? questionSet : [];
 
   const [draftQuestions, setDraftQuestions] = useState(questions);
   const [showModal, setShowModal] = useState(false);
   const [editingQuestion, setEditingQuestion] = useState(null);
 
   useEffect(() => {
-    setDraftQuestions(questions);
-  }, [questions]);
+    fetchQuestionsForQuiz();
+  }, []);
+
+  const fetchQuestionsForQuiz = async () => {
+      const questions = await findQuestionsByQuizId(qid!);
+      console.log(questions);
+      dispatch(setQuestions(questions));
+      setDraftQuestions(questions);
+    };
 
   const handleEdit = (question: any) => {
     setEditingQuestion(question);
     setShowModal(true);
   };
 
-  const handleDelete = (questionId: any) => {
+  const handleDelete = async (questionId: any) => {
     if (window.confirm("Are you sure you want to delete this question?")) {
+      await deleteQuestion(questionId);
       setDraftQuestions((prevDrafts: any) =>
-        prevDrafts.filter((q: any) => q.id !== questionId)
+        prevDrafts.filter((q: any) => q._id !== questionId)
+      );
+      setQuestions((prevDrafts: any) =>
+        prevDrafts.filter((q: any) => q._id !== questionId)
       );
     }
   };
 
   const handleSaveDraftQuestion = (question: any) => {
     setDraftQuestions((prevDrafts: any) => {
-      const exists = prevDrafts.find((q: any) => q.id === question.id);
+      const exists = prevDrafts.find((q: any) => q._id === question._id);
       if (exists) {
-        return prevDrafts.map((q: any) => (q.id === question.id ? question : q));
+        return prevDrafts.map((q: any) => (q._id === question._id ? question : q));
       } else {
         return [...prevDrafts, question];
       }
     });
   };
 
-  const handleCommitChanges = () => {
-    dispatch(updateQuestionSet({ quiz: qid, questions: draftQuestions }));
+  const handleCommitChanges = async () => {
+    draftQuestions.forEach(async (question:any)  => {
+      if (question._id && questions.some((q:any) => q._id === question._id)) {
+        await updateQuestion(question );
+      } else {
+        await createQuestion({...question, _id: uuidv4(), quiz: qid});
+      }
+    });
+  
     navigate(-1);
   };
 
@@ -86,7 +104,7 @@ export default function QuizQuestions() {
         {draftQuestions.length > 0 ? (
           draftQuestions.map((q: any) => (
             <li
-              key={q.id}
+              key={q._id}
               className="list-group-item d-flex justify-content-between align-items-center"
             >
               <span>
@@ -101,7 +119,7 @@ export default function QuizQuestions() {
                 </button>
                 <button
                   className="btn btn-sm btn-outline-danger"
-                  onClick={() => handleDelete(q.id)}
+                  onClick={() => handleDelete(q._id)}
                 >
                   Delete
                 </button>

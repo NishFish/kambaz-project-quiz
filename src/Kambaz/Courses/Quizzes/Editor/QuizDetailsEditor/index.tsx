@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { addQuiz, updateQuiz } from "../../reducer";
 import { v4 as uuidv4 } from "uuid";
+import {createQuiz, updateQuizz} from "../../client.ts";
 
 export default function QuizEditor() {
   const { cid, qid } = useParams();
@@ -31,12 +32,12 @@ export default function QuizEditor() {
     oneQuestionAtATime: true,
     webcamRequired: false,
     lockQuestionsAfterAnswering: false,
-    dueDate: "",
-    availableDate: "",
-    availableUntilDate: "",
+    dueDate: "2026-03-30",
+    availableDate: "2025-03-15",
+    availableUntilDate: "2026-03-28",
     course: cid,
-    published: false,
-    score: {},
+    published: true,
+    score: 0,
   });
 
 
@@ -54,10 +55,12 @@ export default function QuizEditor() {
     setQuiz({ ...quiz, [e.target.id]: e.target.checked });
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (existingQuiz) {
+      await updateQuizz(quiz)
       dispatch(updateQuiz(quiz));
     } else {
+      await createQuiz(quiz)
       dispatch(addQuiz({ ...quiz, _id: uuidv4(), course: cid }));
     }
     navigate(`/Kambaz/Courses/${cid}/Quizzes`);

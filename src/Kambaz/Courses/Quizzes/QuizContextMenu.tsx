@@ -48,7 +48,7 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
           <button
             className="btn btn-link d-flex align-items-center"
             style={{ fontSize: "16px", color: "#007bff", padding: "8px 12px", borderRadius: "4px" }}
-            onClick={() => navigate(`/Kambaz/Courses/${cid}/Quizzes/${quizId}`)}
+            onClick={() => navigate(`/Kambaz/Courses/${cid}/Quizzes/${quizId}/Editor`)}
           >
             <MdEdit className="me-2" />
             Edit
