@@ -6,6 +6,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { addQuiz, updateQuiz } from "../../reducer";
 import { v4 as uuidv4 } from "uuid";
+import * as coursesClient from "../../../client";
+import * as quizzesClient from "../../client";
 
 export default function QuizEditor() {
   const { cid, qid } = useParams();
@@ -37,6 +39,7 @@ export default function QuizEditor() {
     course: cid,
     published: false,
     score: {},
+    userAttempts: {}
   });
 
 
@@ -54,11 +57,14 @@ export default function QuizEditor() {
     setQuiz({ ...quiz, [e.target.id]: e.target.checked });
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (existingQuiz) {
+      await quizzesClient.updateQuiz(quiz);
       dispatch(updateQuiz(quiz));
     } else {
-      dispatch(addQuiz({ ...quiz, _id: uuidv4(), course: cid }));
+      const newQuiz = { ...quiz, _id: uuidv4(), course: cid };
+      const createdQuiz = await coursesClient.createQuizzesForCourse(cid!, newQuiz);
+      dispatch(addQuiz(createdQuiz));
     }
     navigate(`/Kambaz/Courses/${cid}/Quizzes`);
   };

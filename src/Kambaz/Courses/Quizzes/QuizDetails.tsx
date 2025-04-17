@@ -141,13 +141,15 @@ export default function QuizDetails() {
         {currentUser.role === "STUDENT" && (
           <div className="mt-3">
             <b>Remaining Attempts:</b>{" "}
-            {quizDetails.howManyAttempts - (quizDetails.userAttempts[currentUser._id] || 0)}
+            {quizDetails.howManyAttempts
+              - (quizDetails.userAttempts?.[currentUser._id] ?? 0)}
           </div>
         )}
 
+
         {currentUser.role === "STUDENT" &&
           quizDetails.multipleAttempts === "true" &&
-          (quizDetails.userAttempts[currentUser._id] || 0) < quizDetails.howManyAttempts &&
+          (quizDetails.userAttempts?.[currentUser._id] ?? 0) < quizDetails.howManyAttempts &&
           getAvailability(quizDetails) &&
           String(quizDetails.published) === "true" && (
             <div className="start-quiz-button mt-4">
@@ -157,6 +159,7 @@ export default function QuizDetails() {
               </button>
             </div>
           )}
+
 
 
         {currentUser.role === "STUDENT" && (

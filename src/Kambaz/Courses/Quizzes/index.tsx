@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { BsGripVertical } from "react-icons/bs";
@@ -7,8 +7,10 @@ import { GoTriangleUp } from "react-icons/go";
 import ContextMenu from "./QuizContextMenu";
 import { v4 as uuidv4 } from 'uuid';
 import "./styles.css"
-import { deleteQuiz, togglePublish } from "./reducer";
+import { deleteQuiz, togglePublish, setQuizzes, addQuiz, updateQuiz } from "./reducer";
 import { CiSearch } from "react-icons/ci";
+import * as quizzesClient from "./client";
+import * as coursesClient from "../client";
 
 //increase/decreate number of questions when added/removed
 
@@ -18,9 +20,22 @@ export default function Quizzes() {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const currentUser = useSelector((state: any) => state.accountReducer.currentUser);
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  const fetchQuizzesForCourse = async () => {
+    const quizzes = await coursesClient.findQuizzesForCourse(cid!);
+    dispatch(setQuizzes(quizzes));
+  }; useEffect(() => {
+    fetchQuizzesForCourse();
+  }, []);
+
+
+  const deleteQuizandler = async (quizId: string) => {
+    await quizzesClient.deleteQuiz(quizId);
+    dispatch(deleteQuiz(quizId));
+  };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
@@ -31,13 +46,14 @@ export default function Quizzes() {
     navigate(`/Kambaz/Courses/${cid}/Quizzes/${newQuizId}/editor`);
   };
 
-  const handleDeleteQuiz = (quizId: string) => {
-    dispatch(deleteQuiz(quizId))
-  };
-
-  const handlePublishQuiz = (quizId: string) => {
+  const handlePublishQuiz = async (quizId: string) => {
+    const quiz = quizzes.find((q: any) => q._id === quizId);
+    if (!quiz) return;
+    const newPublished = quiz.published === "true" ? "false" : "true";
+    await quizzesClient.togglePublishQuiz(quizId, newPublished);
     dispatch(togglePublish(quizId));
   };
+
 
   const handleCopyQuiz = (quizId: string) => {
     console.log(`Copying quiz: ${quizId}`);
@@ -63,7 +79,7 @@ export default function Quizzes() {
       return `Not available until ${availableDate.toLocaleDateString()}`;
     }
   };
-
+  console.log(quizzes)
   return (
     <div id="wd-quizzes" className="quizzes-container">
       <div className="d-flex justify-content-between align-items-center">
@@ -144,7 +160,7 @@ export default function Quizzes() {
                         cid={cid}
                         isActive={activeMenu === quiz._id}
                         isPublished={String(quiz.published) === "false"}
-                        onDelete={handleDeleteQuiz}
+                        onDelete={deleteQuizandler}
                         togglePublish={handlePublishQuiz}
                         onCopy={handleCopyQuiz}
                         onClose={() => setActiveMenu(null)} // Close the menu

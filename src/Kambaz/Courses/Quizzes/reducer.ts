@@ -1,16 +1,18 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { v4 as uuidv4 } from "uuid";
-import { quizes } from "../../Database";
 import { addQuestion, deleteQuestion, updateQuestionSet } from "./Editor/QuizQuestions/reducer";
 
 const initialState = {
-    quizzes: quizes
+    quizzes: []
 };
 
 const quizzesSlice = createSlice({
     name: "quizzes",
     initialState,
     reducers: {
+        setQuizzes: (state, { payload: quizzes }) => {
+            state.quizzes = quizzes;
+        },
         addQuiz: (state, { payload: quiz }) => {
             const newQuiz = {
                 _id: uuidv4(),
@@ -36,30 +38,30 @@ const quizzesSlice = createSlice({
                 score: quiz.score || {},
                 userAttempts: quiz.userAttempts || {}
             };
-            state.quizzes = [...state.quizzes, newQuiz];
+            state.quizzes = [...state.quizzes, newQuiz] as any;
         },
         deleteQuiz: (state, { payload: quizId }) => {
-            state.quizzes = state.quizzes.filter((q) => q._id !== quizId);
+            state.quizzes = state.quizzes.filter((q: any) => q._id !== quizId);
         },
         updateQuiz: (state, { payload: quiz }) => {
-            state.quizzes = state.quizzes.map((q) =>
+            state.quizzes = state.quizzes.map((q: any) =>
                 q._id === quiz._id ? quiz : q
-            );
+            ) as any;
         },
         editQuiz: (state, { payload: quizId }) => {
-            state.quizzes = state.quizzes.map((q) =>
+            state.quizzes = state.quizzes.map((q: any) =>
                 q._id === quizId ? { ...q, editing: true } : q
-            );
+            ) as any;
         },
         togglePublish: (state, { payload: quizId }) => {
-            state.quizzes = state.quizzes.map((q) =>
+            state.quizzes = state.quizzes.map((q: any) =>
                 q._id === quizId
                     ? {
                         ...q,
                         published: q.published === "true" ? "false" : "true",
                     }
                     : q
-            );
+            ) as any;
         },
         updateScore: (state, { payload: { quizId, newScore, username } }) => {
             state.quizzes = state.quizzes.map((quiz: any) => {
@@ -79,26 +81,26 @@ const quizzesSlice = createSlice({
                     };
                 }
                 return quiz;
-            });
+            }) as any;
         },
 
     },
     extraReducers: (builder) => {
         builder
             .addCase(addQuestion, (state, { payload: { quiz } }) => {
-                const q = state.quizzes.find((x) => x._id === quiz);
+                const q: any = state.quizzes.find((x: any) => x._id === quiz);
                 if (q) q.numberOfQuestions = (q.numberOfQuestions || 0) + 1;
             })
             .addCase(deleteQuestion, (state, { payload: { quiz } }) => {
-                const q = state.quizzes.find((x) => x._id === quiz);
+                const q: any = state.quizzes.find((x: any) => x._id === quiz);
                 if (q) q.numberOfQuestions = Math.max((q.numberOfQuestions || 1) - 1, 0);
             })
             .addCase(updateQuestionSet, (state, { payload: { quiz, questions } }) => {
-                const q = state.quizzes.find((x) => x._id === quiz);
+                const q: any = state.quizzes.find((x: any) => x._id === quiz);
                 if (q) q.numberOfQuestions = questions.length;
             });
     },
 });
 
-export const { addQuiz, deleteQuiz, updateQuiz, editQuiz, togglePublish, updateScore } = quizzesSlice.actions;
+export const { addQuiz, deleteQuiz, updateQuiz, editQuiz, togglePublish, updateScore, setQuizzes } = quizzesSlice.actions;
 export default quizzesSlice.reducer;
