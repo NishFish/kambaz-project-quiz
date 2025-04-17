@@ -12,10 +12,9 @@ export default function QuizPreview() {
     const currentQuiz = useSelector((state: any) =>
         state.quizzesReducer.quizzes.find((quiz: any) => quiz._id === qid)
     );
-    const questionSet = useSelector((state: any) =>
-        state.questionReducer.questionSets.find((qs: any) => qs.quiz === qid)
-    );
-    const questions = questionSet?.questions || [];
+    const questionSet = useSelector((state: any) => state.questionReducer.questionSets);
+
+    const questions = questionSet || [];
 
     const [currentIndex, setCurrentIndex] = useState(0);
     const [answers, setAnswers] = useState<Record<string, any>>({});
@@ -24,7 +23,7 @@ export default function QuizPreview() {
     const currentQuestion = questions[currentIndex];
 
     const handleAnswerChange = (value: any) => {
-        if (currentQuestion?.id) {
+        if (currentQuestion?._id) {
             setAnswers({
                 ...answers,
                 [currentQuestion.id]: value,
@@ -40,15 +39,15 @@ export default function QuizPreview() {
 
     const calculateEarned = () => {
         return questions.reduce((sum: number, q: any) => {
-            const ans = answers[q.id];
+            const ans = answers[q._id];
 
-            if (q.type === "Multiple Choice") {
+            if (q.type === "MULTIPLE_CHOICE") {
                 const choice = q.choices.find((c: any) => c.text === ans);
                 if (choice?.isCorrect) return sum + q.points;
-            } else if (q.type === "True/False") {
+            } else if (q.type === "TRUE_FALSE") {
                 const boolAns = ans === "True";
                 if (boolAns === q.isCorrect) return sum + q.points;
-            } else if (q.type === "Fill in the Blank") {
+            } else if (q.type === "FILL_IN_THE_BLANK") {
                 const txt = (ans || "").trim().toLowerCase();
                 if (q.blanks.some((b: string) => b.toLowerCase() === txt)) return sum + q.points;
             }
@@ -106,7 +105,7 @@ export default function QuizPreview() {
         if (!currentQuestion) return <div>No question found.</div>;
 
         switch (currentQuestion.type) {
-            case "Multiple Choice":
+            case "MULTIPLE_CHOICE":
                 return (
                     <div>
                         <div dangerouslySetInnerHTML={{ __html: currentQuestion.question }} />
@@ -115,10 +114,10 @@ export default function QuizPreview() {
                                 <div key={index} className="form-check mt-2">
                                     <input
                                         type="radio"
-                                        name={`question-${currentQuestion.id}`}
+                                        name={`question-${currentQuestion._id}`}
                                         className="form-check-input"
                                         value={choice.text}
-                                        checked={answers[currentQuestion.id] === choice.text}
+                                        checked={answers[currentQuestion._id] === choice.text}
                                         disabled={submitted}
                                         onChange={(e) => handleAnswerChange(e.target.value)}
                                     />
@@ -127,7 +126,7 @@ export default function QuizPreview() {
                             ))}
                     </div>
                 );
-            case "True/False":
+            case "TRUE_FALSE":
                 return (
                     <div>
                         <div dangerouslySetInnerHTML={{ __html: currentQuestion.question }} />
@@ -135,10 +134,10 @@ export default function QuizPreview() {
                             <div key={index} className="form-check mt-2">
                                 <input
                                     type="radio"
-                                    name={`question-${currentQuestion.id}`}
+                                    name={`question-${currentQuestion._id}`}
                                     className="form-check-input"
                                     value={val}
-                                    checked={answers[currentQuestion.id] === val}
+                                    checked={answers[currentQuestion._id] === val}
                                     disabled={submitted}
                                     onChange={(e) => handleAnswerChange(e.target.value)}
                                 />
@@ -147,7 +146,7 @@ export default function QuizPreview() {
                         ))}
                     </div>
                 );
-            case "Fill in the Blank":
+            case "FILL_IN_THE_BLANK":
                 return (
                     <div>
                         <div dangerouslySetInnerHTML={{ __html: currentQuestion.question }} />
@@ -155,7 +154,7 @@ export default function QuizPreview() {
                             type="text"
                             className="form-control mt-3"
                             placeholder="Enter your answer"
-                            value={answers[currentQuestion.id] || ""}
+                            value={answers[currentQuestion._id] || ""}
                             disabled={submitted}
                             onChange={(e) => handleAnswerChange(e.target.value)}
                         />
