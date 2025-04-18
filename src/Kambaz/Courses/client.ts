@@ -86,3 +86,4 @@ export const createQuizzesForCourse = async (courseId: string, quiz: any) => {
     );
     return response.data;
 };
+

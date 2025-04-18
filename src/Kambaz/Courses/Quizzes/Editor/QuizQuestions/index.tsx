@@ -3,7 +3,9 @@ import { useSelector, useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
 import NewQuestionEditor from "./QuizQuestionsEditor";
 import { useNavigate } from "react-router-dom";
-import { updateQuestionSet } from "./reducer";
+import { setQuestions, updateQuestionSet } from "./reducer";
+import { findQuestionsForQuiz } from "../../client";
+import * as questionsClient from "./client";
 
 export default function QuizQuestions() {
   const dispatch = useDispatch();
@@ -23,6 +25,15 @@ export default function QuizQuestions() {
   useEffect(() => {
     setDraftQuestions(questions);
   }, [questions]);
+
+  const fetchQuestions = async () => {
+    const fetched = await findQuestionsForQuiz(qid as string);
+    dispatch(setQuestions(fetched));
+  };
+
+  useEffect(() => {
+    fetchQuestions();
+  }, []);
 
   const handleEdit = (question: any) => {
     setEditingQuestion(question);
@@ -48,7 +59,14 @@ export default function QuizQuestions() {
     });
   };
 
-  const handleCommitChanges = () => {
+  const handleCommitChanges = async () => {
+    const updatedQuestionSet = {
+      _id: questionSet._id,       // this must match what's in the DB
+      quiz: qid,
+      questions: draftQuestions
+    };
+    console.log(updatedQuestionSet)
+    await questionsClient.updateQuestion(updatedQuestionSet);
     dispatch(updateQuestionSet({ quiz: qid, questions: draftQuestions }));
     navigate(-1);
   };
