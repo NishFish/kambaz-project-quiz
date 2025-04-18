@@ -15,8 +15,15 @@ export const updateQuestion = async (question: any) => {
     const { data } = await axiosWithCredentials.put(`${QUESTIONS_API}/${question._id}`, question);
     return data;
 };
-
-export const updateQuestionScore = async (qid: any, newScore: Number, username: String) => {
-    const { data } = await axiosWithCredentials.put(`${QUESTIONS_API}/${qid}`, { username, newScore });
+export const recordAnswer = async (
+    questionSetId: string,
+    questionId: string,
+    userId: string,
+    answer: any
+) => {
+    const { data } = await axiosWithCredentials.put(
+        `${QUESTIONS_API}/${questionSetId}/answer`,
+        { questionId, userId, answer }
+    );
     return data;
 };

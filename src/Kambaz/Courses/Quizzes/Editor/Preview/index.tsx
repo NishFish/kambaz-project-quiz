@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { updateScore } from "../../reducer";
-import { recordAnswer } from "../QuizQuestions/reducer"
-import * as questionsClient from "../QuizQuestions/client"
+import { recordAnswer, setQuestions } from "../QuizQuestions/reducer"
+import * as quizClient from "../../client"
+import * as questionClient from "../QuizQuestions/client"
 
 export default function QuizPreview() {
     const { cid, qid } = useParams();
@@ -23,6 +24,16 @@ export default function QuizPreview() {
     const [submitted, setSubmitted] = useState(false);
     const [earned, setEarned] = useState<number | null>(null);
     const currentQuestion = questions[currentIndex];
+
+    const fetchQuestions = async () => {
+        const fetched = await quizClient.findQuestionsForQuiz(qid as string);
+        dispatch(setQuestions(fetched));
+    };
+
+    useEffect(() => {
+        fetchQuestions();
+    }, []);
+
 
     const handleAnswerChange = (value: any) => {
         if (currentQuestion?.id) {
@@ -76,14 +87,20 @@ export default function QuizPreview() {
                     ? [...currentQuiz.score, score]
                     : [score];
 
-                await questionsClient.updateQuestionScore(qid, score, currentUser._id);
+                await quizClient.updateQuizScore(qid, score, currentUser._id);
                 dispatch(updateScore({
                     quizId: qid,
                     newScore: score,
                     username: currentUser._id,
                 }));
 
-                Object.entries(answers).forEach(([questionId, answer]) => {
+                Object.entries(answers).forEach(async ([questionId, answer]) => {
+                    await questionClient.recordAnswer(
+                        questionSet._id,
+                        questionId,
+                        currentUser._id,
+                        answer
+                    );
                     dispatch(recordAnswer({
                         quiz: qid,
                         questionId,

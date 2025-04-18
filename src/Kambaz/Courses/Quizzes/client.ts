@@ -35,3 +35,15 @@ export const findQuestionsForQuiz = async (quizId: string) => {
         .get(`${QUIZZES_API}/${quizId}/questions`);
     return response.data;
 };
+
+export const updateQuizScore = async (
+    quizId: any,
+    newScore: number,
+    username: string
+) => {
+    const { data } = await axiosWithCredentials.put(
+        `${QUIZZES_API}/${quizId}/score`,
+        { username, newScore }
+    );
+    return data;
+};
