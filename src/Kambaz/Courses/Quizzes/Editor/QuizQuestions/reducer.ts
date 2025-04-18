@@ -1,26 +1,26 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { v4 as uuidv4 } from "uuid";
-import { questions } from "../../../../Database";
-
 
 const initialState = {
-    questionSets: questions
+    questionSets: []
 };
 
 const questionsSlice = createSlice({
     name: "questions",
     initialState,
     reducers: {
-
-        addQuestionSet: (state, { payload: { quiz } }) => {
-            const exists = state.questionSets.find((qs) => qs.quiz === quiz);
+        setQuestions: (state, { payload: questions }) => {
+            state.questionSets = questions;
+        },
+        addQuestionSet: (state: any, { payload: { quiz } }) => {
+            const exists = state.questionSets.find((qs: any) => qs.quiz === quiz);
             if (!exists) {
                 state.questionSets.push({ _id: uuidv4(), quiz, questions: [] });
             }
         },
 
-        addQuestion: (state, { payload: { quiz, question } }) => {
-            const questionSet = state.questionSets.find((qs) => qs.quiz === quiz);
+        addQuestion: (state: any, { payload: { quiz, question } }) => {
+            const questionSet = state.questionSets.find((qs: any) => qs.quiz === quiz);
             const newQuestion = { ...question, id: question.id || uuidv4() };
             if (questionSet) {
                 questionSet.questions.push(newQuestion);
@@ -29,35 +29,35 @@ const questionsSlice = createSlice({
             }
         },
 
-        updateQuestion: (state, { payload: { quiz, question } }) => {
-            const questionSet = state.questionSets.find((qs) => qs.quiz === quiz);
+        updateQuestion: (state: any, { payload: { quiz, question } }) => {
+            const questionSet = state.questionSets.find((qs: any) => qs.quiz === quiz);
             if (questionSet) {
-                questionSet.questions = questionSet.questions.map((q) =>
+                questionSet.questions = questionSet.questions.map((q: any) =>
                     q.id === question.id ? question : q
                 );
             }
         },
 
-        deleteQuestion: (state, { payload: { quiz, questionId } }) => {
-            const questionSet = state.questionSets.find((qs) => qs.quiz === quiz);
+        deleteQuestion: (state: any, { payload: { quiz, questionId } }) => {
+            const questionSet = state.questionSets.find((qs: any) => qs.quiz === quiz);
             if (questionSet) {
                 questionSet.questions = questionSet.questions.filter(
-                    (q) => q.id !== questionId
+                    (q: any) => q.id !== questionId
                 );
             }
         },
-        updateQuestionSet: (state, { payload: { quiz, questions } }) => {
-            const questionSet = state.questionSets.find((qs) => qs.quiz === quiz);
+        updateQuestionSet: (state: any, { payload: { quiz, questions } }) => {
+            const questionSet = state.questionSets.find((qs: any) => qs.quiz === quiz);
             if (questionSet) {
                 questionSet.questions = questions;
             } else {
                 state.questionSets.push({ _id: uuidv4(), quiz, questions });
             }
         },
-        recordAnswer: (state, { payload: { quiz, questionId, userId, answer } }) => {
-            const questionSet = state.questionSets.find((qs) => qs.quiz === quiz);
+        recordAnswer: (state: any, { payload: { quiz, questionId, userId, answer } }) => {
+            const questionSet = state.questionSets.find((qs: any) => qs.quiz === quiz);
             if (!questionSet) return;
-            const question = questionSet.questions.find((q) => q.id === questionId);
+            const question = questionSet.questions.find((q: any) => q.id === questionId);
             if (!question) return;
             if (!question.latestAnswers) {
                 question.latestAnswers = {};
@@ -69,5 +69,5 @@ const questionsSlice = createSlice({
 }
 );
 
-export const { addQuestionSet, addQuestion, updateQuestion, deleteQuestion, updateQuestionSet, recordAnswer } = questionsSlice.actions;
+export const { addQuestionSet, addQuestion, updateQuestion, deleteQuestion, updateQuestionSet, recordAnswer, setQuestions } = questionsSlice.actions;
 export default questionsSlice.reducer;
