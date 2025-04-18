@@ -65,7 +65,6 @@ export default function QuizQuestions() {
       quiz: qid,
       questions: draftQuestions
     };
-    console.log(updatedQuestionSet)
     await questionsClient.updateQuestion(updatedQuestionSet);
     dispatch(updateQuestionSet({ quiz: qid, questions: draftQuestions }));
     navigate(-1);

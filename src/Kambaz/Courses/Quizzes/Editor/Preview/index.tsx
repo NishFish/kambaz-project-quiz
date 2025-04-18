@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { updateScore } from "../../reducer";
 import { recordAnswer } from "../QuizQuestions/reducer"
+import * as questionsClient from "../QuizQuestions/client"
 
 export default function QuizPreview() {
     const { cid, qid } = useParams();
@@ -58,7 +59,7 @@ export default function QuizPreview() {
     };
 
 
-    const handleNext = () => {
+    const handleNext = async () => {
         if (currentIndex < questions.length - 1) {
             setCurrentIndex(currentIndex + 1);
         } else {
@@ -75,6 +76,7 @@ export default function QuizPreview() {
                     ? [...currentQuiz.score, score]
                     : [score];
 
+                await questionsClient.updateQuestionScore(qid, score, currentUser._id);
                 dispatch(updateScore({
                     quizId: qid,
                     newScore: score,
