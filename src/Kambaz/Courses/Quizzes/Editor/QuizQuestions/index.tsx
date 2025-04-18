@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import NewQuestionEditor from "./QuizQuestionsEditor";
 import { useNavigate } from "react-router-dom";
 import { updateQuestionSet } from "./reducer";
+import {deleteQuestion, updateQuestionnSet, findQuestionsByQuizId} from "../../client.ts";
 
 export default function QuizQuestions() {
   const dispatch = useDispatch();
@@ -20,17 +21,23 @@ export default function QuizQuestions() {
   const [showModal, setShowModal] = useState(false);
   const [editingQuestion, setEditingQuestion] = useState(null);
 
-  useEffect(() => {
-    setDraftQuestions(questions);
-  }, [questions]);
+    useEffect(() => {
+      const fetchQuestionsForQuiz = async () => {
+        const questionSet = await findQuestionsByQuizId(qid!);
+        setDraftQuestions(questionSet ? questionSet.questions : []);
+      };
+      
+      if (qid) fetchQuestionsForQuiz(); // Check if qid is defined before calling fetch
+    }, [qid]);
 
   const handleEdit = (question: any) => {
     setEditingQuestion(question);
     setShowModal(true);
   };
 
-  const handleDelete = (questionId: any) => {
+  const handleDelete = async (questionId: any) => {
     if (window.confirm("Are you sure you want to delete this question?")) {
+      await deleteQuestion(questionId);
       setDraftQuestions((prevDrafts: any) =>
         prevDrafts.filter((q: any) => q.id !== questionId)
       );
@@ -38,8 +45,11 @@ export default function QuizQuestions() {
   };
 
   const handleSaveDraftQuestion = (question: any) => {
+    
     setDraftQuestions((prevDrafts: any) => {
+      
       const exists = prevDrafts.find((q: any) => q.id === question.id);
+      
       if (exists) {
         return prevDrafts.map((q: any) => (q.id === question.id ? question : q));
       } else {
@@ -48,7 +58,8 @@ export default function QuizQuestions() {
     });
   };
 
-  const handleCommitChanges = () => {
+  const handleCommitChanges = async () => {
+    await updateQuestionnSet(qid!, draftQuestions);
     dispatch(updateQuestionSet({ quiz: qid, questions: draftQuestions }));
     navigate(-1);
   };

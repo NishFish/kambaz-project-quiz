@@ -4,10 +4,15 @@ const axiosWithCredentials = axios.create({ withCredentials: true });
 const REMOTE_SERVER = import.meta.env.VITE_REMOTE_SERVER;
 const QUIZZES_API = `${REMOTE_SERVER}/api/quizzes`;
 const QUESTIONS_API = `${REMOTE_SERVER}/api/questions`;
-const ANSWERS_API = `${REMOTE_SERVER}/api/answers`;
-const COURSES_API = `${REMOTE_SERVER}/api/courses`;
+
 
 // --- Quiz Routes ---
+
+export const findQuizById = async (quizId: string) => {
+    const { data } = await axiosWithCredentials.get(`${QUIZZES_API}/${quizId}`);
+    return data;
+  };
+  
 export const deleteQuiz = async (quizId: string) => {
     const response = await axiosWithCredentials.delete(`${QUIZZES_API}/${quizId}`);
     return response.data;
@@ -52,4 +57,11 @@ export const deleteQuestion = async (qid: string) => {
 export const updateQuestion = async (question: any) => {
     const { data } = await axios.put(`${QUESTIONS_API}/${question.questionId}`, question);
     return data;
+};
+
+export const updateQuestionnSet = async (quizId: string, questions: any[]) => {
+  const { data } = await axiosWithCredentials.put(`${QUIZZES_API}/${quizId}/questions`, {
+      questions,
+  });
+  return data;
 };

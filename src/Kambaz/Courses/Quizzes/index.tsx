@@ -27,7 +27,9 @@ export default function Quizzes() {
   const fetchQuizzesForCourse = async () => {
     const quizzes = await coursesClient.findQuizzesForCourse(cid!);
     dispatch(setQuizzes(quizzes));
-  }; useEffect(() => {
+  }; 
+  
+  useEffect(() => {
     fetchQuizzesForCourse();
   }, []);
 

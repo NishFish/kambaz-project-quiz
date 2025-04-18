@@ -1,27 +1,44 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { updateScore } from "../../reducer";
 import { recordAnswer } from "../QuizQuestions/reducer"
+import { updateQuestionnSet, updateQuiz, findQuestionsByQuizId, findQuizById, findQuestionById, updateQuestion } from "../../client";
 
 export default function QuizPreview() {
     const { cid, qid } = useParams();
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const currentUser = useSelector((state: any) => state.accountReducer.currentUser);
-    const currentQuiz = useSelector((state: any) =>
-        state.quizzesReducer.quizzes.find((quiz: any) => quiz._id === qid)
-    );
-    const questionSet = useSelector((state: any) =>
-        state.questionReducer.questionSets.find((qs: any) => qs.quiz === qid)
-    );
-    const questions = questionSet?.questions || [];
-
+    // const currentQuiz = useSelector((state: any) =>
+    //     state.quizzesReducer.quizzes.find((quiz: any) => quiz._id === qid)
+    // );
+    // const questionSet = useSelector((state: any) =>
+    //     state.questionReducer.questionSets.find((qs: any) => qs.quiz === qid)
+    // );
+    //const questions = questionSet?.questions || [];
+    const [currentQuiz, setCurrentQuiz] = useState({} as any);
+    const [questionSet, setQuestionSet] = useState({});
+    const [questions, setQuestions] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [answers, setAnswers] = useState<Record<string, any>>({});
     const [submitted, setSubmitted] = useState(false);
     const [earned, setEarned] = useState<number | null>(null);
-    const currentQuestion = questions[currentIndex];
+    //const [currentQuestion, setCurrentQuestion] = useState({});
+    const currentQuestion = questions[currentIndex] as any;
+
+    useEffect(() => {
+          const fetchQuestionsForQuiz = async () => {
+            const questionSet = await findQuestionsByQuizId(qid!);
+            setQuestionSet(questionSet);
+            setQuestions(questionSet ? questionSet.questions : []);
+
+            const quiz = await findQuizById(qid!);
+            setCurrentQuiz(quiz);
+          };
+          
+          if (qid) fetchQuestionsForQuiz(); // Check if qid is defined before calling fetch
+        }, [qid]);
 
     const handleAnswerChange = (value: any) => {
         if (currentQuestion?.id) {
@@ -58,7 +75,7 @@ export default function QuizPreview() {
     };
 
 
-    const handleNext = () => {
+    const handleNext = async () => {
         if (currentIndex < questions.length - 1) {
             setCurrentIndex(currentIndex + 1);
         } else {
@@ -71,23 +88,56 @@ export default function QuizPreview() {
                 setEarned(score);
                 setSubmitted(true);
 
-                const updatedScoreArray = Array.isArray(currentQuiz.score)
-                    ? [...currentQuiz.score, score]
-                    : [score];
+                const username = currentUser._id;
 
-                dispatch(updateScore({
-                    quizId: qid,
-                    newScore: score,
-                    username: currentUser._id,
-                }));
+                // Ensure score and userAttempts are objects
+                const existingScore = currentQuiz.score || {};
+                const existingAttempts = currentQuiz.userAttempts || {};
 
-                Object.entries(answers).forEach(([questionId, answer]) => {
-                    dispatch(recordAnswer({
-                        quiz: qid,
-                        questionId,
-                        userId: currentUser._id,
-                        answer
-                    }));
+                const updatedScores = {
+                    ...existingScore,
+                    [username]: existingScore[username] ? [...existingScore[username], score] : [score],
+                };
+
+                const updatedAttempts = {
+                    ...existingAttempts,
+                    [username]: (existingAttempts[username] || 0) + 1,
+                };
+
+                const updatedQuiz = {
+                    ...currentQuiz,
+                    score: updatedScores,
+                    userAttempts: updatedAttempts,
+                };
+    
+                setCurrentQuiz(updatedQuiz); 
+                await updateQuiz(updatedQuiz);
+
+                // dispatch(updateScore({
+                //     quizId: qid,
+                //     newScore: score,
+                //     username: currentUser._id,
+                // }));
+
+                Object.entries(answers).forEach(async ([questionId, answer]) => {
+                    
+                    const question = await findQuestionById(questionId);
+                    if (!question) return;
+
+                    if (!question.latestAnswers) {
+                        question.latestAnswers = {};
+                    }
+                    // Update the latest answer for the user
+                    question.latestAnswers[username] = answer;
+
+                    updateQuestion(question);
+
+                    // dispatch(recordAnswer({
+                    //     quiz: qid,
+                    //     questionId,
+                    //     userId: currentUser._id,
+                    //     answer
+                    // }));
                 });
 
             } else {

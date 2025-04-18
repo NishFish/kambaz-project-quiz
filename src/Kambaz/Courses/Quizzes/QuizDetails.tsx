@@ -3,7 +3,8 @@ import { useSelector } from "react-redux";
 import { FaPlay } from "react-icons/fa"; // For the start button for students
 import { BsFillGearFill } from "react-icons/bs"; // For the edit button
 import "./styles.css";
-
+import { findQuizById } from "./client";
+import { useEffect, useState } from "react";
 // Default quiz data (fallback)
 const exampleQuizDetails = {
   title: "Graded Quiz",
@@ -22,8 +23,8 @@ const exampleQuizDetails = {
   dueDate: "2025-03-30",
   availableDate: "2025-03-15",
   availableUntilDate: "2025-03-28",
-  score: {},
-  userAttempts: {}
+  score: {} as any,
+  userAttempts: {} as any
 };
 
 export default function QuizDetails() {
@@ -31,10 +32,12 @@ export default function QuizDetails() {
   const navigate = useNavigate();
   const currentUser = useSelector((state: any) => state.accountReducer.currentUser);
 
-  const quizDetails =
-    useSelector((state: any) =>
-      state.quizzesReducer.quizzes.find((q: any) => q._id === qid)
-    ) || exampleQuizDetails;
+  // const quizDetails =
+  //   useSelector((state: any) =>
+  //     state.quizzesReducer.quizzes.find((q: any) => q._id === qid)
+  //   ) || exampleQuizDetails;
+
+  const [quizDetails, setQuizDetails] = useState(exampleQuizDetails) as any;
 
   // Helper function to convert booleans to "Yes"/"No"
   const boolToStr = (value: any) => (value ? "Yes" : "No");
@@ -55,14 +58,25 @@ export default function QuizDetails() {
     navigate(`/Kambaz/Courses/${cid}/Quizzes/${qid}/preview`);
   };
 
+  useEffect(() => {
+    const fetchQuiz = async () => {
+      const quizDetails = await findQuizById(qid!);
+      setQuizDetails(quizDetails);
+    };
+    fetchQuiz();
+  }, [qid]);
+
   const getAvailability = (quiz: any) => {
     const currentDate = new Date();
 
     const availableDate = new Date(quiz.availableDate);
     const availableUntilDate = new Date(quiz.availableUntilDate);
+    console.log("currentDate: ", currentDate);
+    console.log("availableUntilDate: ", availableUntilDate);
     if (String(quiz.published) === "false") {
       return false;
     }
+    
     if (currentDate > availableUntilDate) {
       return false;
     } else if (currentDate >= availableDate && currentDate <= availableUntilDate) {
