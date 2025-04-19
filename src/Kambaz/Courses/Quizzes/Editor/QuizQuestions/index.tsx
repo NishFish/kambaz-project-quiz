@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { updateQuestionSet } from "./reducer";
 import {deleteQuestion, updateQuestionnSet, findQuestionsByQuizId} from "../../client.ts";
 
+
 export default function QuizQuestions() {
   const dispatch = useDispatch();
   const { qid } = useParams();
@@ -68,6 +69,7 @@ export default function QuizQuestions() {
     setDraftQuestions(questions);
     navigate(-1);
   };
+
 
   return (
     <div className="container mt-4 p-4 bg-light border rounded">

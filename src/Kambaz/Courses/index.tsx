@@ -15,6 +15,7 @@ import QuizPreview from "./Quizzes/Editor/Preview";
 import QuizPreviewAttempt from "./Quizzes/Editor/Preview/previewAttempt";
 
 
+
 export default function Courses({ courses }: { courses: any[]; }) {
   const { cid } = useParams();
   const course = courses.find((course) => course._id === cid);
@@ -43,6 +44,7 @@ export default function Courses({ courses }: { courses: any[]; }) {
             <Route path="Quizzes/:qid/editor" element={<QuizEditor />} />
             <Route path="Quizzes/:qid/preview" element={<QuizPreview />} />
             <Route path="Quizzes/:qid/previewAttempt" element={<QuizPreviewAttempt />} />
+
             <Route path="Quizzes/:qid" element={<QuizDetails />} />
             <Route path="People" element={<PeopleTable />} />
           </Routes>

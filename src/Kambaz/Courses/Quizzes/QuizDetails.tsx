@@ -84,6 +84,7 @@ export default function QuizDetails() {
     } else {
       return false;
     }
+
   };
 
   return (
@@ -99,6 +100,7 @@ export default function QuizDetails() {
           </button>
         </div>
       )}
+
 
       <hr className="my-4" />
 
