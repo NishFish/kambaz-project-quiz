@@ -38,7 +38,7 @@ export default function QuizQuestions() {
 
   const handleDelete = async (questionId: any) => {
     if (window.confirm("Are you sure you want to delete this question?")) {
-      await deleteQuestion(questionId);
+      // await deleteQuestion(questionId);
       setDraftQuestions((prevDrafts: any) =>
         prevDrafts.filter((q: any) => q.id !== questionId)
       );
@@ -62,6 +62,7 @@ export default function QuizQuestions() {
   const handleCommitChanges = async () => {
     await updateQuestionnSet(qid!, draftQuestions);
     dispatch(updateQuestionSet({ quiz: qid, questions: draftQuestions }));
+    console.log("here")
     navigate(-1);
   };
 
