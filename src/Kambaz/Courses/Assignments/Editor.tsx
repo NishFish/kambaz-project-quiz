@@ -4,8 +4,9 @@ import { useParams, useNavigate } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { addAssignment, updateAssignment } from "./reducer";
-import { v4 as uuidv4 } from "uuid";
 import { convertToISO, convertToHumanReadable } from "./convert_date"
+import * as coursesClient from "../client";
+import * as assignmentsClient from "./client";
 
 export default function AssignmentEditor() {
     const { cid, aid } = useParams();
@@ -26,6 +27,7 @@ export default function AssignmentEditor() {
         group: "ASSIGNMENTS",
         gradeDisplay: "Percentage",
         submissionType: "Online",
+        modules: "Multiple Modules",
         assignTo: "Everyone",
     });
 
@@ -39,7 +41,10 @@ export default function AssignmentEditor() {
         setAssignment({ ...assignment, [e.target.id]: e.target.value });
     };
 
-    const handleSave = () => {
+
+    const handleSave = async () => {
+        if (!cid) return;
+
         const formattedAssignment = {
             ...assignment,
             due: convertToHumanReadable(assignment.due),
@@ -48,19 +53,20 @@ export default function AssignmentEditor() {
         };
 
         if (aid && existingAssignment) {
-            dispatch(updateAssignment(formattedAssignment));
+            const createdAssignment = await assignmentsClient.updateAssignment(assignment);
+            dispatch(updateAssignment(createdAssignment));
         } else {
             const newAssignment = {
                 ...formattedAssignment,
-                _id: uuidv4(),
                 course: cid,
             };
-            dispatch(addAssignment(newAssignment));
+
+            const createdAssignment = await coursesClient.createAssignmentForCourse(cid, newAssignment);
+            dispatch(addAssignment(createdAssignment));
         }
 
         navigate(`/Kambaz/Courses/${cid}/Assignments`);
     };
-
 
     return (
         <div id="wd-assignments-editor" className="p-4">

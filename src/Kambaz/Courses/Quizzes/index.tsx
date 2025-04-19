@@ -1,32 +1,43 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { BsGripVertical } from "react-icons/bs";
-import { FaPlus, FaCheckCircle } from "react-icons/fa"; // Import check circle icon
-import { GoTriangleUp } from "react-icons/go"; // For the dropdown triangle
-import ContextMenu from "./QuizContextMenu"; // Import the new ContextMenu component
+import { FaPlus, FaCheckCircle } from "react-icons/fa";
+import { GoTriangleUp } from "react-icons/go";
+import ContextMenu from "./QuizContextMenu";
 import { v4 as uuidv4 } from 'uuid';
 import "./styles.css"
+import { deleteQuiz, togglePublish, setQuizzes, addQuiz, updateQuiz } from "./reducer";
+import { CiSearch } from "react-icons/ci";
+import * as quizzesClient from "./client";
+import * as coursesClient from "../client";
 
-const exampleQuiz = {
-  _id: "example-quiz-id",
-  course: "BIO101",
-  title: "Example Quiz 1",
-  dueDate: "2025-03-30",
-  points: 100,
-  numberOfQuestions: 10,
-  published: true,
-  availableDate: "2025-03-15",  // Added available date for the example
-  availableUntilDate: "2025-03-28",  // Added available until date for the example
-  score: 85,  // Added score for the example quiz
-};
+//increase/decreate number of questions when added/removed
 
-export default function Quizzes({ quizzes = [exampleQuiz] }) {
+export default function Quizzes() {
   const { cid } = useParams();
+  const { quizzes } = useSelector((state: any) => state.quizzesReducer);
   const [searchTerm, setSearchTerm] = useState("");
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const currentUser = useSelector((state: any) => state.accountReducer.currentUser);
+
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const fetchQuizzesForCourse = async () => {
+    const quizzes = await coursesClient.findQuizzesForCourse(cid!);
+    dispatch(setQuizzes(quizzes));
+  }; 
+  
+  useEffect(() => {
+    fetchQuizzesForCourse();
+  }, []);
+
+
+  const deleteQuizandler = async (quizId: string) => {
+    await quizzesClient.deleteQuiz(quizId);
+    dispatch(deleteQuiz(quizId));
+  };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
@@ -37,13 +48,14 @@ export default function Quizzes({ quizzes = [exampleQuiz] }) {
     navigate(`/Kambaz/Courses/${cid}/Quizzes/${newQuizId}/editor`);
   };
 
-  const handleDeleteQuiz = (quizId: string) => {
-    console.log(`Deleting quiz: ${quizId}`);
+  const handlePublishQuiz = async (quizId: string) => {
+    const quiz = quizzes.find((q: any) => q._id === quizId);
+    if (!quiz) return;
+    const newPublished = quiz.published === "true" ? "false" : "true";
+    await quizzesClient.togglePublishQuiz(quizId, newPublished);
+    dispatch(togglePublish(quizId));
   };
 
-  const handlePublishQuiz = (quizId: string) => {
-    console.log(`Publishing/unpublishing quiz: ${quizId}`);
-  };
 
   const handleCopyQuiz = (quizId: string) => {
     console.log(`Copying quiz: ${quizId}`);
@@ -53,13 +65,14 @@ export default function Quizzes({ quizzes = [exampleQuiz] }) {
     setActiveMenu((prevState) => (prevState === quizId ? null : quizId));
   };
 
-  // Function to calculate availability status
   const getAvailability = (quiz: any) => {
     const currentDate = new Date();
 
     const availableDate = new Date(quiz.availableDate);
     const availableUntilDate = new Date(quiz.availableUntilDate);
-
+    if (String(quiz.published) === "false") {
+      return "Closed";
+    }
     if (currentDate > availableUntilDate) {
       return "Closed";
     } else if (currentDate >= availableDate && currentDate <= availableUntilDate) {
@@ -68,11 +81,12 @@ export default function Quizzes({ quizzes = [exampleQuiz] }) {
       return `Not available until ${availableDate.toLocaleDateString()}`;
     }
   };
-
+  console.log(quizzes)
   return (
     <div id="wd-quizzes" className="quizzes-container">
       <div className="d-flex justify-content-between align-items-center">
-        
+        <div className="search-container d-flex align-items-center">
+          <CiSearch className="search-icon me-2" />
           <input
             type="text"
             id="wd-search-quiz"
@@ -80,7 +94,8 @@ export default function Quizzes({ quizzes = [exampleQuiz] }) {
             value={searchTerm}
             onChange={handleSearchChange}
           />
-        
+        </div>
+
         {currentUser.role === "FACULTY" && (
           <button
             id="wd-add-quiz-btn"
@@ -92,8 +107,7 @@ export default function Quizzes({ quizzes = [exampleQuiz] }) {
           </button>
         )}
       </div>
-
-      {/* Header with dropdown triangle */}
+      <hr></hr>
       <div className="quiz-header">
         <GoTriangleUp className="dropdown-icon" />
         <span>Quizzes</span>
@@ -108,61 +122,70 @@ export default function Quizzes({ quizzes = [exampleQuiz] }) {
           .map((quiz: any) => (
             <li key={quiz._id} className="list-group-item py-3 px-3 quiz-list-item">
               <div className="d-flex align-items-center justify-content-between">
-              <div className="flex-grow-1">
-                <a
+                <div className="flex-grow-1">
+                  <a
                     href={`#/Kambaz/Courses/${cid}/Quizzes/${quiz._id}`}
                     className="wd-quiz-link fw-bold text-dark text-decoration-none"
-                >
-                    <div className="wd-quiz-name">{quiz.title}</div> {/* Larger quiz name */}
-                </a>
+                  >
+                    <div className="wd-quiz-name">{quiz.title}</div>
+                  </a>
 
-                {/* Display Availabil   ity and other quiz details */}
-                <div className="wd-quiz-info">
+                  <div className="wd-quiz-info">
                     <p className="mb-1 text-muted">
-                    <b>Availability</b>: {getAvailability(quiz)} &nbsp; | &nbsp;
-                    <b>Due</b>: {quiz.dueDate} &nbsp; | &nbsp; {quiz.points} points &nbsp; | &nbsp;
-                    <b>Number of questions</b>: {quiz.numberOfQuestions}
+                      <b>Availability</b>: {getAvailability(quiz)} &nbsp; | &nbsp;
+                      <b>Due</b>: {quiz.dueDate} &nbsp; | &nbsp; {quiz.points} points &nbsp; | &nbsp;
+                      <b>Number of questions</b>: {quiz.numberOfQuestions}
                     </p>
-                </div>
+                  </div>
                 </div>
 
-                <div className="d-flex flex-column align-items-end">    
-                  {/* Display Score if student */}
-                  {currentUser.role === "STUDENT" && quiz.score && (
-                    <p className="mb-1 text-muted">
-                      <b>Score</b>: {quiz.score}
-                    </p>
+                <div className="d-flex align-items-center">
+                  {String(quiz.published) === "false" ? (
+                    <span className="me-2" style={{ fontSize: "20px" }}>🚫</span>
+                  ) : (
+                    <FaCheckCircle
+                      className="me-2"
+                      style={{ fontSize: "20px", color: "#28a745" }}
+                    />
+                  )}
+                  {currentUser.role === "FACULTY" && (
+                    <div>
+                      <button
+                        className="btn btn-link"
+                        onClick={() => toggleMenu(quiz._id)}
+                      >
+                        <BsGripVertical className="fs-3" />
+                      </button>
+
+                      <ContextMenu
+                        quizId={quiz._id}
+                        cid={cid}
+                        isActive={activeMenu === quiz._id}
+                        isPublished={String(quiz.published) === "false"}
+                        onDelete={deleteQuizandler}
+                        togglePublish={handlePublishQuiz}
+                        onCopy={handleCopyQuiz}
+                        onClose={() => setActiveMenu(null)} // Close the menu
+                      />
+                    </div>
                   )}
                 </div>
 
-                {currentUser.role === "FACULTY" && (
-                  <div className="d-flex align-items-center">
-                    {/* Checkmark moved to the left */}
-                    <FaCheckCircle
-                      className="me-2" // Add margin to the right for spacing
-                      style={{
-                        fontSize: "20px",
-                        color: quiz.published ? "#28a745" : "#6c757d", // Green if published, lighter if not
-                      }}
-                    />
-
-                    <button
-                      className="btn btn-link"
-                      onClick={() => toggleMenu(quiz._id)}
-                    >
-                      <BsGripVertical className="fs-3" />
-                    </button>
-
-                    <ContextMenu
-                      quizId={quiz._id}
-                      cid={cid}
-                      isActive={activeMenu === quiz._id}
-                      isPublished={quiz.published}
-                      onDelete={handleDeleteQuiz}
-                      togglePublish={handlePublishQuiz}
-                      onCopy={handleCopyQuiz}
-                      onClose={() => setActiveMenu(null)} // Close the menu
-                    />
+                {currentUser.role === "STUDENT" && (
+                  <div className="d-flex flex-column align-items-end">
+                    {quiz.score && quiz.score[currentUser._id] !== undefined ? (
+                      <p className="mb-1 text-muted">
+                        <b>Score</b>: {
+                          Array.isArray(quiz.score[currentUser._id]) && quiz.score[currentUser._id].length > 0
+                            ? quiz.score[currentUser._id][quiz.score[currentUser._id].length - 1]
+                            : "Not attempted yet"
+                        }
+                      </p>
+                    ) : (
+                      <p className="mb-1 text-muted">
+                        <b>Score</b>: {"Not attempted yet"}
+                      </p>
+                    )}
                   </div>
                 )}
               </div>

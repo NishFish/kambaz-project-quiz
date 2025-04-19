@@ -4,6 +4,8 @@ import { deleteAssignment } from "./reducer";
 import { FaTrash } from "react-icons/fa";
 import { useDispatch } from "react-redux";
 import { useState } from "react";
+import * as assignmentsClient from "./client";
+
 
 export default function AssignmentControlButtons({ assignmentId }: { assignmentId: string }) {
     const dispatch = useDispatch();
@@ -13,7 +15,8 @@ export default function AssignmentControlButtons({ assignmentId }: { assignmentI
         setShowConfirm(true);
     };
 
-    const confirmDelete = () => {
+    const confirmDelete = async () => {
+        await assignmentsClient.deleteAssignment(assignmentId);
         dispatch(deleteAssignment(assignmentId));
         setShowConfirm(false);
     };

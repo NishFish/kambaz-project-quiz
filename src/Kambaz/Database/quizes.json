@@ -1,0 +1,26 @@
+[
+    {
+        "_id": "example-quiz-id",
+        "course": "BIO101",
+        "title": "Example Quiz 1",
+        "quizType": "Graded Quiz",
+        "assignmentGroup": "Quizzes",
+        "points": 25,
+        "numberOfQuestions": 3,
+        "shuffleAnswers": "false",
+        "timeLimit": "20 Minutes",
+        "multipleAttempts": "true",
+        "howManyAttempts": 1,
+        "showCorrectAnswers": "false",
+        "accessCode": "",
+        "oneQuestionAtATime": "false",
+        "webcamRequired": "false",
+        "lockQuestionsAfterAnswering": "false",
+        "dueDate": "2025-06-16T14:31",
+        "availableDate": "2025-03-15T14:31",
+        "availableUntilDate": "2025-06-19T14:31",
+        "published": "false",
+        "score": {},
+        "userAttempts": {}
+    }
+]

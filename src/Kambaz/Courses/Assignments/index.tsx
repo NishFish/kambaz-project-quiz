@@ -10,18 +10,33 @@ import { useParams } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import { v4 as uuidv4 } from "uuid";
 import { useNavigate } from "react-router-dom";
-import { editAssignment } from "./reducer";
+import * as coursesClient from "../client";
+import { useEffect } from "react";
+import { editAssignment, setAssignment } from "./reducer"
+
+
 
 export default function Assignments() {
     const { cid } = useParams();
     const { assignments } = useSelector((state: any) => state.assignmentsReducer);
     const { currentUser } = useSelector((state: any) => state.accountReducer);
+
     const navigate = useNavigate();
     const handleClick = () => {
         const newAssignmentId = uuidv4();
         navigate(`/Kambaz/Courses/${cid}/Assignments/${newAssignmentId}`);
     };
     const dispatch = useDispatch();
+
+    const fetchAssignments = async () => {
+        const assignments = await coursesClient.findAssignmentsForCourse(cid as string);
+        dispatch(setAssignment(assignments));
+    };
+    useEffect(() => {
+        fetchAssignments();
+    }, []);
+
+
     return (
         <div id="wd-assignments" className="assignments-container">
             <div className="d-flex justify-content-between align-items-center">
@@ -93,7 +108,6 @@ export default function Assignments() {
                 </div>
 
                 {assignments
-                    .filter((assignments: any) => assignments.course === cid)
                     .map((assignments: any) => (
                         <li
                             key={assignments._id}

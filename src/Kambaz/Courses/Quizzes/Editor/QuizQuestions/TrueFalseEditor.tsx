@@ -1,41 +1,49 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ReactQuill from "react-quill";
-import 'react-quill/dist/quill.snow.css'; // Import styles for the Quill editor
+import "react-quill/dist/quill.snow.css";
 
-type TrueFalseQuestion = {
+export type TrueFalseQuestion = {
   question: string;
-  isCorrect: boolean; // Boolean to track if the answer is True or False
+  isCorrect: boolean; // true means the answer is True, false means False
+  id?: string;
 };
 
-const TrueFalseEditor = ({ onSave, onCancel }: { onSave: (question: TrueFalseQuestion) => void; onCancel: () => void }) => {
-  const [questionData, setQuestionData] = useState<TrueFalseQuestion>({
-    question: "",
-    isCorrect: true, // Default to True
-  });
+interface TrueFalseEditorProps {
+  onSave: (question: TrueFalseQuestion) => void;
+  initialData?: TrueFalseQuestion | null;
+}
 
-  // Handle changes for Question content (WYSIWYG editor)
+const TrueFalseEditor = ({ onSave, initialData }: TrueFalseEditorProps) => {
+  const [questionData, setQuestionData] = useState<TrueFalseQuestion>(
+    initialData || { question: "", isCorrect: true }
+  );
+
+  useEffect(() => {
+    if (initialData) {
+      setQuestionData(initialData);
+    }
+  }, [initialData]);
+
   const handleQuestionChange = (value: string) => {
-    setQuestionData((prev) => ({ ...prev, question: value }));
+    const updated = { ...questionData, question: value };
+    setQuestionData(updated);
+    onSave(updated);
   };
 
-  // Toggle the correct answer for True or False
   const handleCorrectChange = (value: boolean) => {
-    setQuestionData((prev) => ({ ...prev, isCorrect: value }));
-  };
-
-  // Handle the Save button
-  const handleSave = () => {
-    onSave(questionData);
+    const updated = { ...questionData, isCorrect: value };
+    setQuestionData(updated);
+    onSave(updated);
   };
 
   return (
     <div className="container mt-4 p-4 bg-light border rounded">
-      {/* Instructions for the user with smaller text */}
       <div className="mb-3">
-        <i className="fs-6">Enter the question, then select if the answer is True or False.</i>
+        <i className="fs-6">
+          Enter the question, then select if the answer is True or False.
+        </i>
       </div>
 
-      {/* Question Text (WYSIWYG Editor) */}
       <div className="mb-3">
         <label className="form-label fw-bold">Question</label>
         <ReactQuill
@@ -43,15 +51,13 @@ const TrueFalseEditor = ({ onSave, onCancel }: { onSave: (question: TrueFalseQue
           onChange={handleQuestionChange}
           placeholder="Enter question description"
           theme="snow"
-          modules={{ toolbar: [['bold', 'italic', 'underline'], ['link']] }}
+          modules={{ toolbar: [["bold", "italic", "underline"], ["link"]] }}
         />
       </div>
 
-      {/* True/False Section */}
       <div className="mb-3">
         <label className="form-label fw-bold">Answer</label>
         <div className="d-flex">
-          {/* True Option */}
           <div className="form-check me-4">
             <input
               type="radio"
@@ -64,8 +70,6 @@ const TrueFalseEditor = ({ onSave, onCancel }: { onSave: (question: TrueFalseQue
               True
             </label>
           </div>
-
-          {/* False Option */}
           <div className="form-check">
             <input
               type="radio"
