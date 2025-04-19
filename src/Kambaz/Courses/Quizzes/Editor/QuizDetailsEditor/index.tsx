@@ -164,6 +164,19 @@ export default function QuizEditor() {
           />
         </Form.Group>
 
+        {quiz.multipleAttempts && (
+        <Form.Group className="mb-3">
+          <Form.Label htmlFor="howManyAttempts">How Many Attempts</Form.Label>
+          <Form.Control
+            type="number"
+            id="howManyAttempts"
+            min={1}
+            value={quiz.howManyAttempts}
+            onChange={handleChange}
+          />
+        </Form.Group>
+      )}
+
         <Form.Group className="mb-3">
           <Form.Check
             type="checkbox"

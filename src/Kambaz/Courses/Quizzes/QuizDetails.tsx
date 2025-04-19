@@ -164,7 +164,6 @@ export default function QuizDetails() {
 
 
         {currentUser.role === "STUDENT" &&
-          quizDetails.multipleAttempts === "true" &&
           (quizDetails.userAttempts?.[currentUser._id] ?? 0) < quizDetails.howManyAttempts &&
           getAvailability(quizDetails) &&
           String(quizDetails.published) === "true" && (
