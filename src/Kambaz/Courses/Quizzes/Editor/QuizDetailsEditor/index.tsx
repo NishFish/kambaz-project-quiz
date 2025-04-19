@@ -28,6 +28,7 @@ export default function QuizEditor() {
     timeLimit: "20 Minutes",
     multipleAttempts: false,
     howManyAttempts: 1,
+    numberOfQuestions: 0,
     showCorrectAnswers: false,
     accessCode: "",
     oneQuestionAtATime: true,
